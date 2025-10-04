@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import logging
+from dropi_logic.utils import try_exception_selenium
 
 
 
@@ -43,20 +43,20 @@ class WebDriverManager:
             WebDriverManager._driver = None
     
 #Espera y retorna un único elemento presente en el DOM (Búsqueda limpia).
+@try_exception_selenium
 def waitAndFindElement(driver,by_method,name_element:str,time:int):
-        try:
-            return WebDriverWait(driver,time).until(
-            EC.presence_of_all_elements_located(((by_method,name_element)))
+    return WebDriverWait(driver,time).until(
+            EC.presence_of_element_located(((by_method,name_element)))
             )
-        except Exception as e:
-            print(f"Se ha encontrado un error inesperado {e}")
 
 #Encuentra, espera y presiona un elemento.
+@try_exception_selenium
 def click_action(driver,by_method,name_element:str, time:int):
-        op = waitAndFindElement(driver,by_method,name_element, time)
-        op.click()
+    op = waitAndFindElement(driver,by_method,name_element, time)
+    op.click()
 
 #Encuentra, espera y escribe sobre un campo
+@try_exception_selenium
 def input_action(driver,by_method,name_element:str, time:int,text:str):
-        op = waitAndFindElement(driver,by_method,name_element, time)
-        op.send_keys(text)
+    op = waitAndFindElement(driver,by_method,name_element, time)
+    op.send_keys(text)
