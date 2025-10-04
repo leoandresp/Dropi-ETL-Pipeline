@@ -1,0 +1,5 @@
+dropi-extractor-venv/
+*.pyc
+__pycache__/
+data/
+assets/
