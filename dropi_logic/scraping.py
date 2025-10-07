@@ -16,10 +16,9 @@ class WebDriverManager:
     @staticmethod
     def get_driver(headless=False):
         try:
+            # 1. Configuración de opciones.
+            chrome_options = Options()
             if headless:
-                # 1. Configuración de opciones.
-                chrome_options = Options()
-                
                 #Opciones para ejecución en segundo plano sin interfaz.
                 chrome_options.add_argument("--headless=new") 
                 chrome_options.add_argument("--disable-gpu")

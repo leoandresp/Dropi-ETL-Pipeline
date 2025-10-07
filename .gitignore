@@ -3,3 +3,4 @@ dropi-extractor-venv/
 __pycache__/
 data/
 assets/
+.env
