@@ -1,7 +1,9 @@
 from .scraping import * 
 from .utils import try_exception_selenium 
 from config import *
- 
+from selenium.webdriver import ActionChains
+import datetime
+import time
 
 #Funciones para el extractor de Datos Droppi
 
@@ -33,12 +35,57 @@ def module_actions_button(driver,action,wait_time):
             
     else:
         pass
-    
+
+@try_exception_selenium    
 def download_report(driver,index_row,wait_time):
     
-    report_table = waitAndFindElement(driver,By.CLASS_NAME,"table",wait_time) #Ubicamos la tabla del módulo
-    row = waitAndFindElement(driver,By.XPATH, f".//tbody/tr[{index_row}]",wait_time) #Indicamos la fila donde se descargará el reporte
-    click_action(driver,By.XPATH,"//app-icon[.//use[contains(@xlink:href, '#File-download')]]",wait_time)
+    report_table = waitAndFindElement(driver,By.CLASS_NAME, "custom-table",wait_time) #Ubicamos la tabla del módulo
+    print("Tabla encontrada")
+    row = report_table.find_element(By.XPATH, f"./tbody/tr[{index_row}]") #Indicamos la fila donde se descargará el reporte
+    print("Fila encontrada")
+    
+    download_icon = row.find_element(
+    By.XPATH,
+    ".//td[contains(@class,'action-button')]//app-icon[1]"
+    )
+    
+    actions = ActionChains(driver)
+    actions.move_to_element(download_icon).click().perform()
+
+@try_exception_selenium 
+def logistic(driver, action):
+    if action == 'Devoluciones':
+        click_action(driver, By.XPATH, "//a[contains(text(), 'Devoluciones')]", 10)
+        #current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        current_date = "2025-10-10"
+
+
+        # Espera la tabla usando un selector CSS
+        current_window = driver.current_window_handle
+        table = waitAndFindElement(
+                driver, 
+                By.CSS_SELECTOR, 
+                "table.table-centered.table-nowrap.mb-0.align-middle.table-hover", 
+                60
+            )
+
+        rows = table.find_elements(By.TAG_NAME, "tr")[1:]  # omitir encabezado
+
+        for row in rows:
+            cols = row.find_elements(By.TAG_NAME, "td")
+            row_date = cols[3].text.strip()
+
+            # Solo tomar la parte YYYY-MM-DD
+            row_date = row_date.split("T")[0]
+
+            print("Actual:", current_date, "Fila:", row_date)
+
+            if row_date == current_date:
+                    download_btn = row.find_element(By.XPATH, ".//a[contains(@class, 'btn-outline-success')]")
+                    driver.execute_script("arguments[0].scrollIntoView(true);", download_btn)
+                    download_btn.click()
+                    time.sleep(5)  # espera por la descarga
+                    driver.switch_to.window(current_window)
 
 if __name__ == "__main__":
     pass
