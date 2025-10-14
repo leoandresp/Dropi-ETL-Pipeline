@@ -49,15 +49,10 @@ def waitAndFindElement(driver,by_method,name_element:str,time:int):
             )
 
 #Encuentra, espera y presiona un elemento.
-
+@try_exception_selenium
 def click_action(driver,by_method,name_element:str, time:int):
-    try:
-        op = waitAndFindElement(driver,by_method,name_element, time)
-        op.click()
-    except:
-        #Forzamos el click con JavaScripts
-        element = driver.find_element(by_method,name_element)
-        driver.execute_script("arguments[0].click();", element)
+    op = waitAndFindElement(driver,by_method,name_element, time)
+    op.click()
 
 #Encuentra, espera y escribe sobre un campo
 @try_exception_selenium
