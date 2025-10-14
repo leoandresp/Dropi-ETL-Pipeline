@@ -1,5 +1,6 @@
 import dropi_logic.scraping as sc
 from dropi_logic.rpa_extractor import *
+from config import *
 import time
 
 #Descargar el reporte seleccionado de los modulos, solo aplica para los que tienen boton de "Acciones" dentro de su módulo
