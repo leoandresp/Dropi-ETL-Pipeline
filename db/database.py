@@ -61,3 +61,5 @@ def create_table_from_df(table_name: str, df: pd.DataFrame, db_file: str):
         
         # Devolvemos el número de filas para verificación
         return conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+    
+    
