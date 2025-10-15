@@ -1,3 +1,63 @@
 import duckdb
+import pandas as pd
+from utils_db import *
+from typing import Optional, Any, List, Tuple
 
-con = duckdb.connect(':memory:')
+
+@with_connection() # Usará DATABASE_FILE por defecto (archivo persistente)
+def create_table_sql(conn: duckdb.DuckDBPyConnection, table_name: str, column_definition: str):
+    """
+    Crea una tabla usando una definición de columnas SQL (ej: 'id INTEGER, name VARCHAR, age INTEGER').
+    """
+    conn.execute(f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
+            {column_definition}
+        );
+    """)
+    print(f"✅ Tabla '{table_name}' creada o ya existente.")
+
+@with_connection()
+def insert_data_sql(conn: duckdb.DuckDBPyConnection, table_name: str, data: List[Tuple]):
+    """
+    Inserta una lista de tuplas de datos en la tabla especificada.
+    Los datos deben coincidir con la estructura de la tabla.
+    """
+    # Determinar el número de placeholders (?) basado en la longitud de la tupla
+    num_columns = len(data[0]) if data else 0
+    placeholders = ', '.join(['?'] * num_columns)
+    
+    conn.executemany(f"INSERT INTO {table_name} VALUES ({placeholders})", data)
+    print(f"✅ {conn.rows_changed} filas insertadas en '{table_name}'.")
+
+@with_connection()
+def query_data(conn: duckdb.DuckDBPyConnection, query: str) -> Optional[List[Tuple]]:
+    """
+    Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
+    """
+    result = conn.execute(query).fetchall()
+    print(f"✅ Consulta ejecutada: {query}")
+    return result
+
+# --- 3. Function to Create Table from DataFrame (Función con DataFrames) ---
+
+@handle_exceptions
+def create_table_from_df(table_name: str, df: pd.DataFrame, db_file: str):
+    """
+    Crea o reemplaza una tabla en DuckDB a partir de un DataFrame de Pandas.
+    Gestiona su propia conexión para flexibilidad (archivo o ':memory:').
+    
+    Args:
+        table_name (str): El nombre de la tabla a crear.
+        df (pd.DataFrame): El DataFrame de Pandas.
+        db_file (str): Archivo de la base de datos o ':memory:'.
+    """
+    # Usamos gestión de contexto para abrir y cerrar la conexión
+    with duckdb.connect(database=db_file, read_only=False) as conn:
+        
+        # DuckDB crea la tabla automáticamente usando el DataFrame
+        conn.execute(f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df;")
+        
+        print(f"✅ Tabla '{table_name}' creada y poblada desde DataFrame en {db_file}.")
+        
+        # Devolvemos el número de filas para verificación
+        return conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
