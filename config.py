@@ -8,8 +8,20 @@ load_dotenv()
 #--------------------------------------
 #BASE DE DATOS
 #-------------------------------------
-DATABASE_FILE = ""
-
+DATABASE_FILE = "db/Oferfly.duckdb"
+DF_ORDERS_DTYPE = {
+    "FECHA DE REPORTE": str,
+    "ID": str,
+    "FECHA": str,
+    "TOTAL DE LA ORDEN": float,
+    "GANANCIA": float,
+    "PRECIO FLETE": float,
+    "COSTO DEVOLUCION FLETE": float,
+    "COMISION": float,
+    "ID DE ORDEN DE TIENDA": str,
+    "NUMERO DE PEDIDO DE TIENDA": str,
+    "CODIGO POSTAL": str
+}
 
 
 #--------------------------------------

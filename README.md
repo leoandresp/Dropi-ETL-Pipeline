@@ -4,6 +4,12 @@ Garantias: Se sustituyen
 Historial Cartera: Se actualiza
 Devoluciones: Se actualizan
 
+Crear hash unico para las tablas,
+Definir llaves primarias,
+Hacer funciones idempotentes,
+Crear tablas limpias,
+Realizar consulta para luego pasar data a archivo de Sheets.
+
 Tengo entendido que, las ordenes se pueden repetir por dia, segun cambie de 
 status.
 

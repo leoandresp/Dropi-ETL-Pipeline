@@ -4,7 +4,8 @@ import logging
 import glob
 import os
 import pandas as pd
-from pandas.errors import EmptyDataError, BadZipFile 
+from pandas.errors import EmptyDataError
+from zipfile import BadZipFile
 from datetime import datetime, timedelta
 
 # Configuración básica de logging 
@@ -59,13 +60,16 @@ def file_error_handler(func):
 
 
 @file_error_handler
-def read_excel_safely(file_path):
+def read_excel_safely(file_path,columns_types=False):
     """Lee un archivo Excel y retorna su DataFrame, manejando errores a través del decorador."""
-    return pd.read_excel(file_path)
+    if columns_types:
+        return pd.read_excel(file_path,dtype=columns_types)
+    else:
+        return pd.read_excel(file_path)
 
 # --- Función Principal Modificada ---
 
-def get_files(path, file_name, multiple_files=False):
+def get_files(path, file_name,multiple_files=False,columns_types=False):
     
     """
     Busca archivos en una ruta específica que coincidan con un nombre parcial.
@@ -88,7 +92,7 @@ def get_files(path, file_name, multiple_files=False):
     if not multiple_files:
         # Retornar el DataFrame del archivo más reciente
         latest_file = current_files[0]
-        return read_excel_safely(latest_file) # Usamos la función decorada
+        return read_excel_safely(latest_file,columns_types) # Usamos la función decorada
 
     # 3. Calcular el umbral de tiempo (hace 10 minutos)
     ten_minutes_ago = datetime.now() - timedelta(minutes=10)
@@ -112,7 +116,7 @@ def get_files(path, file_name, multiple_files=False):
         
     dataframes = []
     for file in recent_files:
-        df = read_excel_safely(file) 
+        df = read_excel_safely(file,columns_types) 
         if df is not None:
             dataframes.append(df)
         else:

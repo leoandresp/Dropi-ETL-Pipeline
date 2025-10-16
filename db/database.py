@@ -1,6 +1,6 @@
 import duckdb
 import pandas as pd
-from utils_db import *
+from db.utils_db import *
 from typing import Optional, Any, List, Tuple
 
 
@@ -29,7 +29,7 @@ def insert_data_sql(conn: duckdb.DuckDBPyConnection, table_name: str, data: List
     conn.executemany(f"INSERT INTO {table_name} VALUES ({placeholders})", data)
     print(f"✅ {conn.rows_changed} filas insertadas en '{table_name}'.")
 
-@with_connection()
+#@with_connection()
 def query_data(conn: duckdb.DuckDBPyConnection, query: str) -> Optional[List[Tuple]]:
     """
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.

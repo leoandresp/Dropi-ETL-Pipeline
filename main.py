@@ -3,6 +3,7 @@ from dropi_logic.rpa_extractor import *
 from config import *
 import time
 from dropi_logic.utils import *
+from db.database import *
 
 #Descargar el reporte seleccionado de los modulos, solo aplica para los que tienen boton de "Acciones" dentro de su módulo
 def download_report_module(driver,action,wait_time,module,submodule=False,):
@@ -23,6 +24,7 @@ def download_report_module(driver,action,wait_time,module,submodule=False,):
 
 
 if __name__ == "__main__":
+    '''
     #Configuramos la conexión con el navegador
     driver = sc.WebDriverManager().get_driver()
     driver.get(DROPI_WEB)
@@ -33,20 +35,27 @@ if __name__ == "__main__":
     
     #Descargamos las ordenes por fila, producto, garantias e historial de Cartera
     #Obtenemos cada unos de los reportes descargados y los guardamos en una Data Frame
+    '''
+    #download_report_module(driver,A_ORDER_BY_ROW,60,M_ORDERS,SB_MY_ORDERS)
+    df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,columns_types=DF_ORDERS_DTYPE)
+
     
-    download_report_module(driver,A_ORDER_BY_ROW,60,M_ORDERS,SB_MY_ORDERS)
-    df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME)
-    
-    download_report_module(driver,A_ORDER_BY_PRODUCT,60,M_ORDERS,SB_MY_ORDERS)
+    #download_report_module(driver,A_ORDER_BY_PRODUCT,60,M_ORDERS,SB_MY_ORDERS)
     df_order_by_product = get_files(DOWNLOAD_FOLDER,ORDER_BY_PRODUCT_FILE_NAME)
     
-    download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_MY_WARRANTYS,SB_WARRANTYS)
+    #download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_MY_WARRANTYS,SB_WARRANTYS)
     df_warrantys = get_files(DOWNLOAD_FOLDER,WARRANTY_FILE_NAME)
     
-    download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_WALLET)
+    #download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_WALLET)
     df_wallet = get_files(DOWNLOAD_FOLDER,WALLET_FILE_NAME)
     
     #Descargamos las Devoluciones
-    access_module(driver,M_LOGISTIC,60)
-    logistic(driver,SB_DEVOLUTIONS)
+    #access_module(driver,M_LOGISTIC,60)
+    #logistic(driver,SB_DEVOLUTIONS)
     df_devolutions = get_files(DOWNLOAD_FOLDER,DEVOLUTIONS_FILE_NAME,True)
+    
+    create_table_from_df("RAW_Orders",df_order_by_row,DATABASE_FILE)
+    create_table_from_df("RAW_Orders_details",df_order_by_product,DATABASE_FILE)
+    create_table_from_df("RAW_Warrantys",df_warrantys,DATABASE_FILE)
+    create_table_from_df("RAW_Wallet",df_wallet,DATABASE_FILE)
+    create_table_from_df("RAW_Devolutions",df_devolutions,DATABASE_FILE)

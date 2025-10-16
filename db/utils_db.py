@@ -6,7 +6,7 @@ def handle_exceptions(func):
     """
     Decorador para envolver funciones de DB y manejar excepciones de DuckDB y generales.
     """
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -25,7 +25,7 @@ def with_connection(db_file: str = DATABASE_FILE, autocommit: bool = True):
     Acepta el path del archivo o ':memory:' para una DB temporal.
     """
     def decorator(func):
-        @wraps(func)
+        @functools.wraps(func)
         @handle_exceptions
         def wrapper(*args, **kwargs):
             conn = None
