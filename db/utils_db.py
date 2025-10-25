@@ -51,3 +51,8 @@ def with_connection(db_file: str = DATABASE_FILE, autocommit: bool = True):
                     #print(f"⚙️ Conexión cerrada después de '{func.__name__}'") # Comentario opcional de debug
         return wrapper
     return decorator
+
+'''
+direct_query_data("ALTER TABLE RAW_Orders ADD PRIMARY KEY (ingestion_id)")
+
+'''

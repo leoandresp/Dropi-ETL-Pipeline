@@ -17,25 +17,21 @@ def create_table_sql(conn: duckdb.DuckDBPyConnection, table_name: str, column_de
     print(f"✅ Tabla '{table_name}' creada o ya existente.")
 
 @with_connection()
-def insert_data_sql(conn: duckdb.DuckDBPyConnection, table_name: str, data: List[Tuple]):
+def insert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     """
-    Inserta una lista de tuplas de datos en la tabla especificada.
-    Los datos deben coincidir con la estructura de la tabla.
+    Inserta los dartos de una df en una tabla
     """
-    # Determinar el número de placeholders (?) basado en la longitud de la tupla
-    num_columns = len(data[0]) if data else 0
-    placeholders = ', '.join(['?'] * num_columns)
     
-    conn.executemany(f"INSERT INTO {table_name} VALUES ({placeholders})", data)
-    print(f"✅ {conn.rows_changed} filas insertadas en '{table_name}'.")
+    result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ingestion_id) DO NOTHING")
+    #print(f"Se han insertado {result.rowcount} en {table_name}")
 
 @with_connection()
-def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str) -> Optional[List[Tuple]]:
+def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
     """
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
     """
     result = conn.execute(query).fetchdf()
-    print(f"✅ Consulta ejecutada: {query}")
+    #print(f"✅ Consulta ejecutada: {query}")
     return result
 
 @with_connection()

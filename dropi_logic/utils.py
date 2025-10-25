@@ -12,6 +12,7 @@ import uuid
 # Configuración básica de logging 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+INGESTION_NAMESPACE = uuid.NAMESPACE_DNS
 
 #------------------------------------------------------------
 # FUNCIONES DECORADORAS
@@ -68,20 +69,62 @@ def read_excel_safely(file_path,columns_types=False):
     else:
         return pd.read_excel(file_path)
 
-def add_ingestion_id(df: pd.DataFrame):
-    """Añade un UUID único y una marca de tiempo a cada fila."""
+def add_ingestion_id(df: pd.DataFrame, columns_for_uuid_ings: list) -> pd.DataFrame:
+    """
+    Añade un UUIDv5 determinista (basado en columnas) y una marca de tiempo.
     
-    # 1. Crear el UUID único para cada registro
-    df['ingestion_id'] = [str(uuid.uuid4()) for _ in range(len(df))]
+    Args:
+        df: El DataFrame de pandas a modificar.
+        columns_for_uuid_ings: Lista de nombres de columnas a usar para generar el UUID.
+    """
     
-    # 2. Añadir la marca de tiempo de la ingesta
+    # 1. Preparar la cadena de entrada (el 'Name')
+    # Concatenamos los valores de las columnas especificadas en una sola cadena.
+    # CRUCIAL: Convertimos a cadena y estandarizamos (lower()) para garantizar
+    # que valores iguales produzcan el mismo UUID, incluso si el casing varía.
+    
+    
+    
+    df['uuid_input_string'] = (
+        df[columns_for_uuid_ings]
+        .astype(str)
+        .agg('_'.join, axis=1) # Une los valores de las columnas con un '_'
+        .str.lower()           # Estandariza a minúsculas
+    )
+    
+    # 2. Crear el UUIDv5 para cada registro
+    # Aplicamos la función uuid.uuid5 a la cadena de entrada y el Namespace
+    
+    def generate_uuid5(input_string):
+        return str(uuid.uuid5(INGESTION_NAMESPACE, input_string))
+        
+    df['ingestion_id'] = df['uuid_input_string'].apply(generate_uuid5)
+    
+    #Creamos una columna que cuente la cantidad de filas de un mismo ID
+    df['row_order'] = df.groupby(['ingestion_id']).cumcount() + 1
+    
+    final_columns_for_uuid_ings = ['ingestion_id','row_order']
+    #Creamos la ingestion_id final
+    df['uuid_input_string_final'] = (
+        df[final_columns_for_uuid_ings]
+        .astype(str)
+        .agg('_'.join, axis=1) # Une los valores de las columnas con un '_'
+        .str.lower()           # Estandariza a minúsculas
+    )
+    
+    df['ingestion_id'] = df['uuid_input_string_final'].apply(generate_uuid5)
+    
+    # 3. Añadir la marca de tiempo de la ingesta (sin cambios)
     df['ingestion_timestamp'] = pd.Timestamp.now()
+    
+    # (Opcional) Eliminar la columna auxiliar de la cadena de entrada
+    df = df.drop(columns=['uuid_input_string','uuid_input_string_final','row_order'])
     
     return df
 
 # --- Función Principal Modificada ---
 
-def get_files(path, file_name,multiple_files=False,columns_types=False):
+def get_files(path, file_name,columns_for_uuid_ings,multiple_files=False,columns_types=False):
     
     """
     Busca archivos en una ruta específica que coincidan con un nombre parcial.
@@ -95,7 +138,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
     current_files = glob.glob(pattern)
 
     if not current_files:
-        print("INFO: No se encontraron archivos disponibles.")
+        print(f"INFO: No se encontraron archivos disponibles para {file_name}")
         return None
 
     # 2. Ordenar todos los archivos por fecha de modificación (más reciente primero)
@@ -105,7 +148,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         # Retornar el DataFrame del archivo más reciente
         latest_file = current_files[0]
         df = read_excel_safely(latest_file,columns_types)
-        final_df = add_ingestion_id(df)
+        final_df = add_ingestion_id(df,columns_for_uuid_ings)
         return  final_df
 
     # 3. Calcular el umbral de tiempo (hace 10 minutos)
@@ -117,7 +160,8 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         file_mtime = datetime.fromtimestamp(os.path.getmtime(file))
         
         # Si el archivo fue modificado después del umbral de 10 minutos
-        if file_mtime > ten_minutes_ago:
+        #if file_mtime > ten_minutes_ago:
+        if True:
             recent_files.append(file)
         else:
             # Optimización: si los archivos están ordenados, podemos detener el bucle
@@ -125,7 +169,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
 
     # 5. Procesar los archivos recientes
     if not recent_files:
-        print("INFO: No hay archivos que cumplan el filtro de 10 minutos.")
+        print(f"INFO: No hay archivos que cumplan el filtro de 10 minutos de {file_name}")
         return None
         
     dataframes = []
@@ -141,7 +185,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         combined_df = pd.concat(dataframes, axis=0, ignore_index=True)
         
         #Añadimos el ingestion_id:
-        final_df = add_ingestion_id(combined_df)
+        final_df = add_ingestion_id(combined_df,columns_for_uuid_ings)
         
         return final_df
     else:
