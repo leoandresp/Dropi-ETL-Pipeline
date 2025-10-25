@@ -18,9 +18,64 @@ DF_ORDERS_DTYPE = {
     "PRECIO FLETE": float,
     "COSTO DEVOLUCION FLETE": float,
     "COMISION": float,
+    "FECHA DE NOVEDAD": str,
+    "FECHA DE SOLUCIÓN": str,
+    "FECHA DE ÚLTIMO MOVIMIENTO":str,
     "ID DE ORDEN DE TIENDA": str,
     "NUMERO DE PEDIDO DE TIENDA": str,
+    "FECHA GENERACION DE GUIA":str,
     "CODIGO POSTAL": str
+}
+
+DF_ORDERS_PRODUCTS_DTYPE = {
+    "FECHA DE REPORTE": str,
+    "ID": str,
+    "FECHA": str,
+    "TOTAL DE LA ORDEN": float,
+    "GANANCIA": float,
+    "PRECIO FLETE": float,
+    "COSTO DEVOLUCION FLETE": float,
+    "COMISION": float,
+    "PRECIO PROVEEDOR":float,
+    "PRECIO PROVEEDOR X CANTIDAD":float,
+    "PRODUCTO ID":str,
+    "VARIACION ID":str,
+    "CANTIDAD":int,
+    "FECHA DE NOVEDAD": str,
+    "FECHA DE SOLUCIÓN": str,
+    "FECHA DE ÚLTIMO MOVIMIENTO":str,
+    "ID DE ORDEN DE TIENDA": str,
+    "NUMERO DE PEDIDO DE TIENDA": str,
+    "FECHA GENERACION DE GUIA":str,
+    "CODIGO POSTAL": str
+}
+
+DF_WARRANTY_DTYPE = {
+    "ID GARANTIA": str,
+    "ID ORDEN":str,
+    "GUIA ORIGINAL":str,
+    "NUMERO DE CONTACTO TIENDA":str,
+    "NUMERO DE PROVEEDOR":str,
+    "FECHA DE CREACION":str,
+    "GUIA DE DESPACHO":str,
+    "NUMERO DE GUIA O ORDEN DE RECOLECCION":str
+}
+
+DF_WALLET_DTYPE = {
+    "ID":str,
+    "FECHA":str,
+    "MONTO":float,
+    "MONTO PREVIO":float,
+    "ORDEN ID":str,
+    "NUMERO DE GUIA":str,
+}
+
+DF_DEVOLUTIONS_DTYPE = {
+    "ID":str,
+    "MOVIMIENTO": float,
+    "STOCK PREVIO":float,
+    "STOCK ACTUAL":float,
+    "NUMERO DE GUIA":str
 }
 
 
