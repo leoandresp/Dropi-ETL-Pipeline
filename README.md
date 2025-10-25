@@ -1,5 +1,5 @@
 Realizar CheckList para validar que todo el pipeline funcione correctamente
-Ordenes: Se actualizan
+Ordenes: Se actualizan (ID: ID_ORDER + )
 Garantias: Se sustituyen
 Historial Cartera: Se actualiza
 Devoluciones: Se actualizan

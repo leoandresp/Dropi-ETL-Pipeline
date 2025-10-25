@@ -39,7 +39,6 @@ if __name__ == "__main__":
     #download_report_module(driver,A_ORDER_BY_ROW,60,M_ORDERS,SB_MY_ORDERS)
     df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,columns_types=DF_ORDERS_DTYPE)
 
-    
     #download_report_module(driver,A_ORDER_BY_PRODUCT,60,M_ORDERS,SB_MY_ORDERS)
     df_order_by_product = get_files(DOWNLOAD_FOLDER,ORDER_BY_PRODUCT_FILE_NAME)
     
@@ -59,3 +58,9 @@ if __name__ == "__main__":
     create_table_from_df("RAW_Warrantys",df_warrantys,DATABASE_FILE)
     create_table_from_df("RAW_Wallet",df_wallet,DATABASE_FILE)
     create_table_from_df("RAW_Devolutions",df_devolutions,DATABASE_FILE)
+    
+    result = direct_query_data("SELECT * FROM RAW_Orders")
+    print(result)
+    
+    
+    

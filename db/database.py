@@ -29,14 +29,25 @@ def insert_data_sql(conn: duckdb.DuckDBPyConnection, table_name: str, data: List
     conn.executemany(f"INSERT INTO {table_name} VALUES ({placeholders})", data)
     print(f"✅ {conn.rows_changed} filas insertadas en '{table_name}'.")
 
-#@with_connection()
-def query_data(conn: duckdb.DuckDBPyConnection, query: str) -> Optional[List[Tuple]]:
+@with_connection()
+def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str) -> Optional[List[Tuple]]:
     """
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
     """
-    result = conn.execute(query).fetchall()
+    result = conn.execute(query).fetchdf()
     print(f"✅ Consulta ejecutada: {query}")
     return result
+
+@with_connection()
+def file_query_data(conn:duckdb.DuckDBPyConnection,query_path:str):
+    
+    #Leemos el archivo .sql
+    with open(query_path,'r') as f:
+        sql_script = f.read()
+    
+    #Guardamos el resultado de la consulta en un df
+    result = conn.execute(sql_script)
+    return result.fetchdf()
 
 # --- 3. Function to Create Table from DataFrame (Función con DataFrames) ---
 
