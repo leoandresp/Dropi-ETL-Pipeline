@@ -55,6 +55,30 @@ def file_error_handler(func):
             return None
     return wrapper
 
+def handle_pandas_errors(func):
+    """
+    Decorador para controlar errores de Pandas (ValueError, TypeError) 
+    y otros errores inesperados.
+    Si el error es de conversión de tipo (ValueError/TypeError), retorna None.
+    Si es cualquier otro error, imprime una advertencia y retorna None.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            # Llama a la función original de procesamiento
+            return func(*args, **kwargs)
+        
+        except (ValueError, TypeError) as e:
+            # Captura errores comunes de Pandas como fallos de to_datetime
+            # Retorna None para marcar el dato como faltante/inválido.
+            # print(f"ADVERTENCIA: Fallo de conversión de tipo: {e}") 
+            return None 
+            
+        except Exception as e:
+            # Captura cualquier otro error no esperado (except genérico)
+            print(f"ERROR FATAL INESPERADO en la función {func.__name__}: {e}. Retornando None.")
+            return None
+    return wrapper
 
 #--------------------------------------------
 # FUNCIONES  OBTENCION Y MANIPULACIÓN DE ARCHIVOS

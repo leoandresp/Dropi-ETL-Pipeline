@@ -57,7 +57,7 @@ def logistic(driver, action):
     if action == 'Devoluciones':
         click_action(driver, By.XPATH, "//a[contains(text(), 'Devoluciones')]", 10)
         #current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        current_date = "2025-10-10"
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
 
         # Espera la tabla usando un selector CSS

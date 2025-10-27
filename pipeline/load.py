@@ -1,4 +1,7 @@
 '''
+-Se añadio la columa fecha en devoluciones
+-Separar el ID producto, la cantidad y la descripcion en garantias
+-Validar lo del producto en devoluciones
 -Editar funcion para permitir que los archivos .sql puedan leer las df en memoria y no solo los de ruta
 -Crear funcion para limpiar duplicados, convertir vacios en 0 si es numerico, formato fecha en df, arreglar formato fecha malo y vacios si estan en nulo o NAN en PK, que el formato UTF-8 correcto
 -Crear las tablas correspondientes que guardaran los datos silver
@@ -7,9 +10,11 @@
 -Enviar datos a el archivo correspondiente
 -Crear la configuracion Logging y el run_pipeline.py
 -Crear validaciones correspondientes y test
--Orquestar con Cron
+-Orquestar con Cronz
 -Subir a la nube
 -Los ID no pueden ser nulos
+- Principios ACID
+- Para las devoluciones y otros casos que valide la ultima fecha de actualizacion y apartir de esa fecha descargue
 
 
 Otros cosas a aprender:
