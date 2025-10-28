@@ -1,16 +1,23 @@
 '''
--Se añadio la columa fecha en devoluciones
--Separar el ID producto, la cantidad y la descripcion en garantias
+-Agregar el MAX ingestion_timestamp para las cargas delta
+-Agregar la columna Update_at en las tablas silver
+-Probar todo el flujo
+-Pendiente de los upsert ya que estoy tomando toda la raw data y el ingestion id puede jugar en contra
+-Validar lo de las garantias activas
+
+
+-Se añadio la columa fecha en devoluciones ✅
+-Separar el ID producto, la cantidad y la descripcion en garantias ✅
 -Validar lo del producto en devoluciones
 -Editar funcion para permitir que los archivos .sql puedan leer las df en memoria y no solo los de ruta
--Crear funcion para limpiar duplicados, convertir vacios en 0 si es numerico, formato fecha en df, arreglar formato fecha malo y vacios si estan en nulo o NAN en PK, que el formato UTF-8 correcto
--Crear las tablas correspondientes que guardaran los datos silver
+-Crear funcion para limpiar duplicados, convertir vacios en 0 si es numerico, formato fecha en df, arreglar formato fecha malo y vacios si estan en nulo o NAN en PK, que el formato UTF-8 correcto ✅
+-Crear las tablas correspondientes que guardaran los datos silver 
 -Crear transformacion segun las reglas de Ana Karina, para guardar en la capa gold
 -Crear tabla de la capa gold
 -Enviar datos a el archivo correspondiente
 -Crear la configuracion Logging y el run_pipeline.py
 -Crear validaciones correspondientes y test
--Orquestar con Cronz
+-Orquestar con Cron
 -Subir a la nube
 -Los ID no pueden ser nulos
 - Principios ACID
@@ -37,10 +44,8 @@ Pendiente de los valores que no estan duplicados pero si son identicos para la R
 from db.utils_db import *
 from db.database import *
 
-def load(tables:list,datas:list):
-    
-    
+def load(tables:list,datas:list):    
     for i in range(len(tables)):
-        #print(f"{datas[i]} antes:  {direct_query_data(f"SELECT COUNT(*) FROM {datas[i]}")}")
         insert_data_sql_df(datas[i],tables[i])
-        #print(f"{datas[i]} después:  {direct_query_data(f"SELECT COUNT(*) FROM {datas[i]}")}")
+    print("Lista la carga inicial")
+

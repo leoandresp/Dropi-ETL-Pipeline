@@ -88,12 +88,31 @@ RAW_DEVOLUTIONS = "RAW_Devolutions"
 #LOAD
 RAW_LOAD =[RAW_ORDERS,RAW_ORDERS_DETAILS,RAW_WARRANTYS,RAW_WALLET,RAW_DEVOLUTIONS]
 
+
+#------------------------------------------------------------------
+#EXTRACT----------------------------------------------------------
+#------------------------------------------------------------------
+
 #Columnas que generaran Id unico para evitar duplicidad en la ingesta.
 COLUMNS_UUID_INGS_ORDERS = ["FECHA DE REPORTE","ID","HORA","FECHA"]
 COLUMNS_UUID_INGS_ORDERS_PRODUCT = ["FECHA DE REPORTE","ID","HORA","FECHA","PRODUCTO ID","VARIACION ID"]
 COLUMNS_UUID_INGS_WARRANY = ["ID GARANTIA","ID ORDEN", "GUIA ORIGINAL","ESTADO","PRODUCTO","FECHA DE CREACION"]
 COLUMNS_UUID_INGS_WALLET = ["ID","FECHA","TIPO","ORDEN ID","NUMERO DE GUIA"]
 COLUMNS_UUID_INGS_DEVOLUTIONS = ["ID","PRODUCTO","USUARIO","BODEGA","TIPO","MOVIMIENTO","NUMERO DE GUIA"]
+
+#--------------------------------------------------------------------
+#TRANSFORM
+#--------------------------------------------------------------------
+
+#Columnas que serán transformadas en tipo fecha.
+DICT_DATES = {
+    0: ["FECHA DE REPORTE","FECHA","FECHA DE NOVEDAD","FECHA DE SOLUCIÓN","FECHA DE ÚLTIMO MOVIMIENTO","FECHA GENERACION DE GUIA"],
+    1: ["FECHA DE REPORTE","FECHA","FECHA DE NOVEDAD","FECHA DE SOLUCIÓN","FECHA DE ÚLTIMO MOVIMIENTO","FECHA GENERACION DE GUIA"],
+    2: ["FECHA DE CREACION"],
+    3:["FECHA"],
+    4: []
+}
+
 
 #--------------------------------------
 #Rutas universales del SO

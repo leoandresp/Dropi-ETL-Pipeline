@@ -142,7 +142,7 @@ def add_ingestion_id(df: pd.DataFrame, columns_for_uuid_ings: list) -> pd.DataFr
     df['ingestion_timestamp'] = pd.Timestamp.now()
     
     # (Opcional) Eliminar la columna auxiliar de la cadena de entrada
-    df = df.drop(columns=['uuid_input_string','uuid_input_string_final','row_order'])
+    df = df.drop(columns=['uuid_input_string','uuid_input_string_final'])
     
     return df
 

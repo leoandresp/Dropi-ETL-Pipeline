@@ -4,6 +4,8 @@ from dropi_logic.utils import *
 from config import *
 import time
 from db.database import * 
+from pipeline.load import *
+
 
 
 #Descargar el reporte seleccionado de los modulos, solo aplica para los que tienen boton de "Acciones" dentro de su módulo
@@ -25,7 +27,9 @@ def download_report_module(driver,action,wait_time,module,submodule=False):
   
 #HOT FIX: DESCARCODEAR LUEGO, HACERLA REUTILIZABLE. Actualmente se requiere entrega rapida al cliente    
 def extract_data():
-    ''''
+    
+    print(f"Inicia la extracción de Datos desde DROPI")
+    
     #Configuramos la conexión con el navegador
     driver = sc.WebDriverManager().get_driver()
     driver.get(DROPI_WEB)
@@ -43,7 +47,9 @@ def extract_data():
     #Descargamos las Devoluciones
     access_module(driver,M_LOGISTIC,60)
     logistic(driver,SB_DEVOLUTIONS)
-    '''
+    
+    print(f"Guardando la data extraida en repectivos DF")
+    
     #Guardamos los datos correspondientes en dataframes
     df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,COLUMNS_UUID_INGS_ORDERS,columns_types=DF_ORDERS_DTYPE)
     df_order_by_product = get_files(DOWNLOAD_FOLDER,ORDER_BY_PRODUCT_FILE_NAME,COLUMNS_UUID_INGS_ORDERS_PRODUCT,        columns_types=DF_ORDERS_PRODUCTS_DTYPE)
@@ -51,19 +57,15 @@ def extract_data():
     df_wallet = get_files(DOWNLOAD_FOLDER,WALLET_FILE_NAME,COLUMNS_UUID_INGS_WALLET,columns_types=DF_WALLET_DTYPE)
     df_devolutions = get_files(DOWNLOAD_FOLDER,DEVOLUTIONS_FILE_NAME,COLUMNS_UUID_INGS_DEVOLUTIONS,multiple_files=True,columns_types=DF_DEVOLUTIONS_DTYPE)
     
-    
-    '''
-    prueba = direct_query_data('SELECT * FROM RAW_Orders_details WHERE ingestion_id IS NOT NULL')
-    print(prueba)
-    prueba.to_csv("aqui.csv",encoding='utf-8')
-    
-    direct_query_data("ALTER TABLE RAW_Orders_details ADD PRIMARY KEY (ingestion_id)")
-    #insert_data_sql_df("RAW_Orders_details",df_order_by_product)
-    '''
-    
     outputs_df = [df_order_by_row,df_order_by_product,df_warrantys,df_wallet,df_devolutions]
     
     return outputs_df
+
+if __name__ == "__main__":
+    raw_data = extract_data()
+    
+    print(f"Cargando RAW Data en sus respectivas tablas")
+    load(raw_data,RAW_LOAD)
     
 
     

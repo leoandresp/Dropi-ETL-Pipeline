@@ -17,6 +17,9 @@ dict_dates = {
 #Hay columnas que me trae en 0 cuando deberia estar vacio
 silver_data = clean_list_of_dataframes(raw_data,dict_dates)
 
+#Separamos las columnas de Productos de Garantia para hacerla un ID Producto y Descripcion de Producto
+silver_data[2] = split_column(silver_data[2],"PRODUCTO","-",["ID PRODUCTO","DESCRIPCION PRODUCTO"])
+
 print(len(silver_data))
 
 contador = 0
