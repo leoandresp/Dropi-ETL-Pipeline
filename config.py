@@ -93,12 +93,9 @@ RAW_LOAD =[RAW_ORDERS,RAW_ORDERS_DETAILS,RAW_WARRANTYS,RAW_WALLET,RAW_DEVOLUTION
 #EXTRACT----------------------------------------------------------
 #------------------------------------------------------------------
 
-#Columnas que generaran Id unico para evitar duplicidad en la ingesta.
-COLUMNS_UUID_INGS_ORDERS = ["FECHA DE REPORTE","ID","HORA","FECHA"]
-COLUMNS_UUID_INGS_ORDERS_PRODUCT = ["FECHA DE REPORTE","ID","HORA","FECHA","PRODUCTO ID","VARIACION ID"]
-COLUMNS_UUID_INGS_WARRANY = ["ID GARANTIA","ID ORDEN", "GUIA ORIGINAL","ESTADO","PRODUCTO","FECHA DE CREACION"]
-COLUMNS_UUID_INGS_WALLET = ["ID","FECHA","TIPO","ORDEN ID","NUMERO DE GUIA"]
-COLUMNS_UUID_INGS_DEVOLUTIONS = ["ID","PRODUCTO","USUARIO","BODEGA","TIPO","MOVIMIENTO","NUMERO DE GUIA"]
+ID_ORDER_PRUDCUCT = "ID_ORDER_PRODUCT" #Nombre de ID unico para Orders_product
+ID = "ID" #Primera parte de la concatenación del campo unique ID de Orders_product
+ROW_NUMBER = "row_number" #Segunda parte de la concatenación del campo unique ID de Orders_product
 
 #--------------------------------------------------------------------
 #TRANSFORM
@@ -112,6 +109,11 @@ DICT_DATES = {
     3:["FECHA"],
     4: []
 }
+
+SQL_GET_LAST_RAW_DATA = "SELECT * FROM {} WHERE  ingestion_timestamp = (SELECT MAX(ingestion_timestamp) FROM {})"
+WARRANTY_SPLIT_COLUMN = "PRODUCTO"
+WARRANTY_LIST_SPLITTED = ["ID PRODUCTO","DESCRIPCION PRODUCTO"]
+WARRANTY_RANAMED_COLUMNS = {"ID GARANTIA":"ID"}
 
 
 #--------------------------------------

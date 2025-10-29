@@ -7,6 +7,7 @@ import pandas as pd
 from pandas.errors import EmptyDataError
 from zipfile import BadZipFile
 from datetime import datetime, timedelta
+import hashlib
 import uuid
 
 # Configuración básica de logging 
@@ -93,62 +94,63 @@ def read_excel_safely(file_path,columns_types=False):
     else:
         return pd.read_excel(file_path)
 
-def add_ingestion_id(df: pd.DataFrame, columns_for_uuid_ings: list) -> pd.DataFrame:
+def generate_sha256(text):
+    """Genera un hash SHA256 de una cadena de texto."""
+    if pd.isna(text): # Manejo de posibles NaN o None
+        return None
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+def add_ingestion_id(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Añade un UUIDv5 determinista (basado en columnas) y una marca de tiempo.
-    
-    Args:
-        df: El DataFrame de pandas a modificar.
-        columns_for_uuid_ings: Lista de nombres de columnas a usar para generar el UUID.
+    Crea un ID de ingesta único basado en el contenido de la fila
+    y un contador para filas idénticas (para idempotencia robusta).
     """
     
-    # 1. Preparar la cadena de entrada (el 'Name')
-    # Concatenamos los valores de las columnas especificadas en una sola cadena.
-    # CRUCIAL: Convertimos a cadena y estandarizamos (lower()) para garantizar
-    # que valores iguales produzcan el mismo UUID, incluso si el casing varía.
+    # 1. Preparación y Generación del Hash de Contenido (Agrupador)
     
+    # Crea una copia para trabajar y llena NaN con una cadena vacía para hashear
+    df_temp = df.copy().fillna("")
     
+    # Concatenar todas las columnas en una sola cadena de entrada
+    columns_to_hash = df_temp.columns.tolist()
+    df_temp['content_hash_input'] = df_temp[columns_to_hash].astype(str).agg('|'.join, axis=1)
+
+    # Calcular el hash que servirá como ID de AGRUPACIÓN
+    df['ingestion_id'] = df_temp['content_hash_input'].apply(generate_sha256)
     
-    df['uuid_input_string'] = (
-        df[columns_for_uuid_ings]
-        .astype(str)
-        .agg('_'.join, axis=1) # Une los valores de las columnas con un '_'
-        .str.lower()           # Estandariza a minúsculas
-    )
-    
-    # 2. Crear el UUIDv5 para cada registro
-    # Aplicamos la función uuid.uuid5 a la cadena de entrada y el Namespace
-    
-    def generate_uuid5(input_string):
-        return str(uuid.uuid5(INGESTION_NAMESPACE, input_string))
-        
-    df['ingestion_id'] = df['uuid_input_string'].apply(generate_uuid5)
-    
-    #Creamos una columna que cuente la cantidad de filas de un mismo ID
-    df['row_order'] = df.groupby(['ingestion_id']).cumcount() + 1
-    
-    final_columns_for_uuid_ings = ['ingestion_id','row_order']
-    #Creamos la ingestion_id final
-    df['uuid_input_string_final'] = (
-        df[final_columns_for_uuid_ings]
-        .astype(str)
-        .agg('_'.join, axis=1) # Une los valores de las columnas con un '_'
-        .str.lower()           # Estandariza a minúsculas
-    )
-    
-    df['ingestion_id'] = df['uuid_input_string_final'].apply(generate_uuid5)
-    
-    # 3. Añadir la marca de tiempo de la ingesta (sin cambios)
+    # Añadir la marca de tiempo de la ingesta
     df['ingestion_timestamp'] = pd.Timestamp.now()
     
-    # (Opcional) Eliminar la columna auxiliar de la cadena de entrada
-    df = df.drop(columns=['uuid_input_string','uuid_input_string_final'])
+    # 2. Diferenciar Filas Idénticas (Tu solución con cumcount)
+    
+    # Cuenta la ocurrencia de cada hash de contenido (1, 2, 3...)
+    df['row_number'] = df.groupby(['ingestion_id']).cumcount() + 1
+    
+    
+    # 3. Calcular el ID de Ingesta FINAL ÚNICO (Recalcular el Hash)
+    
+    # Combina el hash de contenido con el número de fila. 
+    # Esto garantiza que (hash_A, 1) y (hash_A, 2) generen hashes finales distintos.
+    df['final_hash_input'] = (
+        df['ingestion_id'].astype(str) + 
+        '_' + 
+        df['row_number'].astype(str)
+    )
+    
+    # Recalcula el hash para obtener el ID de ingesta final, corto y único
+    df['ingestion_id'] = df['final_hash_input'].apply(generate_sha256)
+
+    
+    # 4. Limpieza
+    
+    # Eliminar columnas auxiliares
+    df = df.drop(columns=['final_hash_input'])
     
     return df
 
 # --- Función Principal Modificada ---
 
-def get_files(path, file_name,columns_for_uuid_ings,multiple_files=False,columns_types=False):
+def get_files(path, file_name,multiple_files=False,columns_types=False):
     
     """
     Busca archivos en una ruta específica que coincidan con un nombre parcial.
@@ -172,7 +174,7 @@ def get_files(path, file_name,columns_for_uuid_ings,multiple_files=False,columns
         # Retornar el DataFrame del archivo más reciente
         latest_file = current_files[0]
         df = read_excel_safely(latest_file,columns_types)
-        final_df = add_ingestion_id(df,columns_for_uuid_ings)
+        final_df = add_ingestion_id(df)
         return  final_df
 
     # 3. Calcular el umbral de tiempo (hace 10 minutos)
@@ -209,9 +211,11 @@ def get_files(path, file_name,columns_for_uuid_ings,multiple_files=False,columns
         combined_df = pd.concat(dataframes, axis=0, ignore_index=True)
         
         #Añadimos el ingestion_id:
-        final_df = add_ingestion_id(combined_df,columns_for_uuid_ings)
+        final_df = add_ingestion_id(combined_df)
         
         return final_df
     else:
         print("ERROR: Los archivos encontrados en el rango de 10 minutos no pudieron ser leídos.")
         return None
+    
+    

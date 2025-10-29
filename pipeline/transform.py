@@ -123,6 +123,20 @@ def parse_date_with_formats(date_str: str) -> pd.Timestamp:
     # Intentar inferencia (fallará para cadenas no válidas)
     return pd.to_datetime(date_str, errors='raise') 
 
+def renames_columns(df: pd.DataFrame,columns_renamed:dict) -> pd.DataFrame:
+    ''' Renombra un grupo de columnas de un dataframe'''
+    df_renamed = df.rename(columns_renamed)
+    return df_renamed
+
+def add_unique_product_id(df: pd.DataFrame)-> pd.DataFrame:
+    '''Crea un ID unico para la Tabla de Orders_Product'''
+    df[ID_ORDER_PRUDCUCT] = (
+        df[ID].astype(str) + 
+        '-' + 
+        df[ROW_NUMBER].astype(str)
+    )
+    return df
+
 
 if __name__ == "__main__":
     
@@ -130,15 +144,28 @@ if __name__ == "__main__":
     #TRANSFORMACIÓN CAPA SILVER------------------------------------
     #--------------------------------------------------------------
     
-    print("Incio de limpieza de datos para capa Silver")
+    print("Incio de limpieza de datos para capa Silver")        
     
-    #Obtenemos la RAW DATA
-    raw_data = [direct_query_data(f"SELECT * FROM {df}") for df in RAW_LOAD]
+    #Obtenemos la RAW DATA de la ingesta mas reciente
+    raw_data = [direct_query_data(SQL_GET_LAST_RAW_DATA.format(df,df) ) for df in RAW_LOAD]
     
     #Limpiamos la DATA
+    print("Limpienado datos")
     silver_data = silver_data = clean_list_of_dataframes(raw_data,DICT_DATES)
     
     #Realizamos las Transformaciones correspondientes
-    silver_data[2] = split_column(silver_data[2],"PRODUCTO","-",["ID PRODUCTO","DESCRIPCION PRODUCTO"])
+    print("Realizando las tranformaciones correspondientes")
+    #Dividimos la columna de producto
+    silver_data[2] = split_column(silver_data[2],WARRANTY_SPLIT_COLUMN,"-",WARRANTY_LIST_SPLITTED) 
+    
+    #Renombramos el ID GARANTIA por ID
+    silver_data[2] = renames_columns(silver_data[2],WARRANTY_RANAMED_COLUMNS)
+    
+    #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
+    silver_data[1] = add_unique_product_id(silver_data[1])
+    
+    #Cargamos los datos nuevos a sus respectivas Tablas según corresponda:
+    file_query_data(r"db\querys\upserts\orders_upsert.sql",silver_data[0])
+    
     
     

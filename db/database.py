@@ -26,6 +26,15 @@ def insert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     #print(f"Se han insertado {result.rowcount} en {table_name}")
 
 @with_connection()
+def upsert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
+    """
+    Inserta los dartos de una df en una tabla
+    """
+    
+    result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ID) DO UPDATE SET" )
+    #print(f"Se han insertado {result.rowcount} en {table_name}")
+
+@with_connection()
 def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
     """
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
@@ -35,10 +44,10 @@ def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
     return result
 
 @with_connection()
-def file_query_data(conn:duckdb.DuckDBPyConnection,query_path:str):
+def file_query_data(conn:duckdb.DuckDBPyConnection,query_path:str,df=False):
     
     #Leemos el archivo .sql
-    with open(query_path,'r') as f:
+    with open(query_path,'r',encoding='utf-8') as f:
         sql_script = f.read()
     
     #Guardamos el resultado de la consulta en un df

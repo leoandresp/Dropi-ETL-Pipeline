@@ -27,7 +27,7 @@ def download_report_module(driver,action,wait_time,module,submodule=False):
   
 #HOT FIX: DESCARCODEAR LUEGO, HACERLA REUTILIZABLE. Actualmente se requiere entrega rapida al cliente    
 def extract_data():
-    
+    '''
     print(f"Inicia la extracción de Datos desde DROPI")
     
     #Configuramos la conexión con el navegador
@@ -49,21 +49,21 @@ def extract_data():
     logistic(driver,SB_DEVOLUTIONS)
     
     print(f"Guardando la data extraida en repectivos DF")
-    
+    '''
     #Guardamos los datos correspondientes en dataframes
-    df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,COLUMNS_UUID_INGS_ORDERS,columns_types=DF_ORDERS_DTYPE)
-    df_order_by_product = get_files(DOWNLOAD_FOLDER,ORDER_BY_PRODUCT_FILE_NAME,COLUMNS_UUID_INGS_ORDERS_PRODUCT,        columns_types=DF_ORDERS_PRODUCTS_DTYPE)
-    df_warrantys = get_files(DOWNLOAD_FOLDER,WARRANTY_FILE_NAME,COLUMNS_UUID_INGS_WARRANY,columns_types=DF_WARRANTY_DTYPE)
-    df_wallet = get_files(DOWNLOAD_FOLDER,WALLET_FILE_NAME,COLUMNS_UUID_INGS_WALLET,columns_types=DF_WALLET_DTYPE)
-    df_devolutions = get_files(DOWNLOAD_FOLDER,DEVOLUTIONS_FILE_NAME,COLUMNS_UUID_INGS_DEVOLUTIONS,multiple_files=True,columns_types=DF_DEVOLUTIONS_DTYPE)
+    df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,columns_types=DF_ORDERS_DTYPE)
+    df_order_by_product = get_files(DOWNLOAD_FOLDER,ORDER_BY_PRODUCT_FILE_NAME, columns_types=DF_ORDERS_PRODUCTS_DTYPE)
+    df_warrantys = get_files(DOWNLOAD_FOLDER,WARRANTY_FILE_NAME,columns_types=DF_WARRANTY_DTYPE)
+    df_wallet = get_files(DOWNLOAD_FOLDER,WALLET_FILE_NAME,columns_types=DF_WALLET_DTYPE)
+    df_devolutions = get_files(DOWNLOAD_FOLDER,DEVOLUTIONS_FILE_NAME,multiple_files=True,columns_types=DF_DEVOLUTIONS_DTYPE)
     
     outputs_df = [df_order_by_row,df_order_by_product,df_warrantys,df_wallet,df_devolutions]
     
     return outputs_df
 
 if __name__ == "__main__":
-    raw_data = extract_data()
     
+    raw_data = extract_data()
     print(f"Cargando RAW Data en sus respectivas tablas")
     load(raw_data,RAW_LOAD)
     
