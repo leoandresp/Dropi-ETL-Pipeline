@@ -144,28 +144,30 @@ if __name__ == "__main__":
     #TRANSFORMACIÓN CAPA SILVER------------------------------------
     #--------------------------------------------------------------
     
-    print("Incio de limpieza de datos para capa Silver")        
+    def clean_raw_data(data):
+            print("Incio de limpieza de datos para capa Silver")        
+            #Limpiamos la DATA
+            print("Limpienado datos")
+            silver_data = clean_list_of_dataframes(data,DICT_DATES)
+            return silver_data
     
-    #Obtenemos la RAW DATA de la ingesta mas reciente
-    raw_data = [direct_query_data(SQL_GET_LAST_RAW_DATA.format(df,df) ) for df in RAW_LOAD]
     
-    #Limpiamos la DATA
-    print("Limpienado datos")
-    silver_data = silver_data = clean_list_of_dataframes(raw_data,DICT_DATES)
-    
-    #Realizamos las Transformaciones correspondientes
-    print("Realizando las tranformaciones correspondientes")
-    #Dividimos la columna de producto
-    silver_data[2] = split_column(silver_data[2],WARRANTY_SPLIT_COLUMN,"-",WARRANTY_LIST_SPLITTED) 
-    
-    #Renombramos el ID GARANTIA por ID
-    silver_data[2] = renames_columns(silver_data[2],WARRANTY_RANAMED_COLUMNS)
-    
-    #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
-    silver_data[1] = add_unique_product_id(silver_data[1])
-    
-    #Cargamos los datos nuevos a sus respectivas Tablas según corresponda:
-    file_query_data(r"db\querys\upserts\orders_upsert.sql",silver_data[0])
+    def silver_data_transform(data):
+        
+        #Realizamos las Transformaciones correspondientes
+        print("Realizando las tranformaciones correspondientes")
+        #Dividimos la columna de producto
+        data[2] = split_column(data[2],WARRANTY_SPLIT_COLUMN,"-",WARRANTY_LIST_SPLITTED) 
+        
+        #Renombramos el ID GARANTIA por ID
+        data[2] = renames_columns(data[2],WARRANTY_RANAMED_COLUMNS)
+        
+        #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
+        data[1] = add_unique_product_id(data[1])
+        
+        return data
+        
+
     
     
     

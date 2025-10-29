@@ -63,9 +63,15 @@ def extract_data():
 
 if __name__ == "__main__":
     
-    raw_data = extract_data()
-    print(f"Cargando RAW Data en sus respectivas tablas")
-    load(raw_data,RAW_LOAD)
+    
+    def raw_data_ingestion():
+        raw_data = extract_data()
+        print(f"Cargando RAW Data en sus respectivas tablas")
+        return raw_data
+        
+    "Extrae los datos de la ingesta mas reciente para transformarlos y pasarlos a la capa silver"
+    def silver_data_extract():
+        return [direct_query_data(SQL_GET_LAST_RAW_DATA.format(df,df) ) for df in RAW_LOAD]
     
 
     

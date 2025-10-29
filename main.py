@@ -46,7 +46,7 @@ print( direct_query_data(
 df= direct_query_data("DESCRIBE RAW_Orders")
 print(df)
 '''
-df= direct_query_data("SELECT * FROM Orders")
+df= direct_query_data("DESCRIBE DEVOLUTION")
 print(df)
 #df.to_excel("data\Aqui0.xlsx")
 #print( direct_query_data("DESCRIBE Orders") )
