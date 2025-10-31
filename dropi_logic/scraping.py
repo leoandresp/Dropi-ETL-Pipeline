@@ -59,3 +59,29 @@ def click_action(driver,by_method,name_element:str, time:int):
 def input_action(driver,by_method,name_element:str, time:int,text:str):
     op = waitAndFindElement(driver,by_method,name_element, time)
     op.send_keys(text)
+
+def close_new_windows_and_return_to_main(driver, principal_window_handle: str):
+    """
+    Busca y cierra todas las ventanas (pestañas o pop-ups) que no sean 
+    la ventana principal, y luego devuelve el foco del driver a la principal.
+    """
+    
+    all_windows = driver.window_handles
+    
+    # Solo procesamos si hay más de una ventana abierta
+    if len(all_windows) > 1:
+        print("Detectada(s) nueva(s) ventana(s). Procediendo a cerrar.")
+        
+        # Iteramos sobre todos los identificadores de ventana
+        for window_handle in all_windows:
+            if window_handle != principal_window_handle:
+                # Cambiamos el foco a la nueva ventana
+                driver.switch_to.window(window_handle)
+                driver.close() # Cerramos la ventana
+                
+        # Una vez que todas las ventanas nuevas han sido cerradas,
+        # es OBLIGATORIO devolver el foco a la ventana principal.
+        driver.switch_to.window(principal_window_handle)
+        print("Foco devuelto a la ventana principal.")
+    else:
+        print("No se detectaron ventanas adicionales para cerrar.")
