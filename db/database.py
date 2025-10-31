@@ -17,7 +17,7 @@ def create_table_sql(conn: duckdb.DuckDBPyConnection, table_name: str, column_de
     print(f"✅ Tabla '{table_name}' creada o ya existente.")
 
 @with_connection()
-def insert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
+def ingestion_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     """
     Inserta los dartos de una df en una tabla
     """

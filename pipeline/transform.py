@@ -65,7 +65,11 @@ def clean_list_of_dataframes(
     
     return clean_dfs
 
+#
 def add_date_column(df: pd.DataFrame)-> pd.DataFrame:
+    """
+    Añade una columna fecha a un dataframe
+    """
     df["fecha"] = datetime.date.today()
     return df
 
@@ -85,14 +89,14 @@ def split_column(df: pd.DataFrame, column_to_separate:str,
         raise ValueError("La lista 'nombres_nuevas_columnas' debe contener exactamente dos nombres.")
 
     # 1. Separar la columna. 'expand=True' crea un DataFrame con las partes separadas.
-    #    '.str.strip()' se encadena para limpiar los espacios en blanco de cada parte.
-    partes_separadas = df[column_to_separate].str.split(separator_element, expand=True).apply(lambda x: x.str.strip())
+
+    separates_parts = df[column_to_separate].str.split(separator_element, expand=True).apply(lambda x: x.str.strip())
 
     # 2. Asignar los nombres a las nuevas columnas.
-    partes_separadas.columns = new_columns_name
+    separates_parts.columns = new_columns_name
 
     # 3. Concatenar las nuevas columnas al DataFrame original.
-    df = pd.concat([df, partes_separadas], axis=1)
+    df = pd.concat([df, separates_parts], axis=1)
 
     # 4. Eliminar la columna original.
     df = df.drop(columns=[column_to_separate])
@@ -103,7 +107,6 @@ def split_column(df: pd.DataFrame, column_to_separate:str,
 def parse_date_with_formats(date_str: str) -> pd.Timestamp:
     """
     Intenta parsear una cadena de fecha con múltiples formatos.
-    El decorador handle_pandas_errors capturará cualquier fallo.
     """
     if pd.isna(date_str) or not date_str:
         return None
@@ -137,35 +140,33 @@ def add_unique_product_id(df: pd.DataFrame)-> pd.DataFrame:
     )
     return df
 
+    
+#--------------------------------------------------------------
+#TRANSFORMACIÓN CAPA SILVER------------------------------------
+#--------------------------------------------------------------
+    
+def clean_raw_data(data):
+        print("Incio de limpieza de datos para capa Silver")        
+        #Limpiamos la DATA
+        print("Limpienado datos")
+        silver_data = clean_list_of_dataframes(data,DICT_DATES)
+        return silver_data
 
-if __name__ == "__main__":
+
+def silver_data_transform(data):
     
-    #--------------------------------------------------------------
-    #TRANSFORMACIÓN CAPA SILVER------------------------------------
-    #--------------------------------------------------------------
+    #Realizamos las Transformaciones correspondientes
+    print("Realizando las tranformaciones correspondientes")
+    #Dividimos la columna de producto
+    data[2] = split_column(data[2],WARRANTY_SPLIT_COLUMN,"-",WARRANTY_LIST_SPLITTED) 
     
-    def clean_raw_data(data):
-            print("Incio de limpieza de datos para capa Silver")        
-            #Limpiamos la DATA
-            print("Limpienado datos")
-            silver_data = clean_list_of_dataframes(data,DICT_DATES)
-            return silver_data
+    #Renombramos el ID GARANTIA por ID
+    data[2] = renames_columns(data[2],WARRANTY_RANAMED_COLUMNS)
     
+    #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
+    data[1] = add_unique_product_id(data[1])
     
-    def silver_data_transform(data):
-        
-        #Realizamos las Transformaciones correspondientes
-        print("Realizando las tranformaciones correspondientes")
-        #Dividimos la columna de producto
-        data[2] = split_column(data[2],WARRANTY_SPLIT_COLUMN,"-",WARRANTY_LIST_SPLITTED) 
-        
-        #Renombramos el ID GARANTIA por ID
-        data[2] = renames_columns(data[2],WARRANTY_RANAMED_COLUMNS)
-        
-        #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
-        data[1] = add_unique_product_id(data[1])
-        
-        return data
+    return data
         
 
     

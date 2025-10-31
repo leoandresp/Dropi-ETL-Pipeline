@@ -9,7 +9,7 @@ import time
 
 #Inicio de Sesión
 @try_exception_selenium
-def logging(driver,user,wait_time,password):
+def log_in(driver,user,wait_time,password):
     input_action(driver,By.ID,'email',wait_time,user)
     input_action(driver,By.ID,'password',wait_time,password)
     click_action(driver,By.XPATH, "//button[.//span[text()='Iniciar Sesión']]", 60)
@@ -27,14 +27,26 @@ def access_sub_module(driver,submodule,wait_time):
 #Presionar alguna acción dentro de los módulos.
 @try_exception_selenium    
 def module_actions_button(driver,action,wait_time):
-    click_action(driver, By.XPATH, rf"//a[contains(text(), 'Acciones')]", wait_time)
-    click_action(driver, By.XPATH, rf"//button[contains(text(), '{action}')]", wait_time)
+    xpath_acciones = rf"//a[contains(text(), 'Acciones')]"
+    
+    #Validamos si existen el botón de "Acciones", sino presionamos la acción directamente
+    if element_exists(driver,By.XPATH,xpath_acciones):
+        click_action(driver, By.XPATH, rf"//a[contains(text(), 'Acciones')]", wait_time)
+        click_action(driver, By.XPATH, rf"//button[contains(text(), '{action}')]", wait_time)
+    else:
+        click_action(driver, By.XPATH, rf"//button[contains(span, '{action}')]", wait_time)
     
     if action in ACTION_WITH_REPORT_LIST: 
         click_action(driver, By.XPATH, "//button[contains(text(), 'Ver reportes')]", 10)
-            
-    else:
-        pass
+
+@try_exception_selenium
+def element_exists(driver, by, value):
+    # Busca los elementos con un timeout muy corto (e.g., 1 segundo)
+    # y retorna True o False sin lanzar excepción.
+    driver.implicitly_wait(1) 
+    found = len(driver.find_elements(by, value)) > 0
+    driver.implicitly_wait(10) # Restaura el implicit wait original
+    return found
 
 @try_exception_selenium    
 def download_report(driver,index_row,wait_time):
@@ -61,7 +73,8 @@ def logistic(driver, action):
 
 
         # Espera la tabla usando un selector CSS
-        current_window = driver.current_window_handle
+        principal_window = driver.current_window_handle
+
         table = waitAndFindElement(
                 driver, 
                 By.CSS_SELECTOR, 
@@ -85,7 +98,7 @@ def logistic(driver, action):
                     driver.execute_script("arguments[0].scrollIntoView(true);", download_btn)
                     download_btn.click()
                     time.sleep(5)  # espera por la descarga
-                    driver.switch_to.window(current_window)
+                    close_new_windows_and_return_to_main(driver,principal_window)
 
 if __name__ == "__main__":
     pass
