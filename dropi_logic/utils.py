@@ -121,34 +121,29 @@ def add_ingestion_id(df: pd.DataFrame) -> pd.DataFrame:
     # Añadir la marca de tiempo de la ingesta
     df['ingestion_timestamp'] = pd.Timestamp.now()
     
-    # 2. Diferenciar Filas Idénticas (Tu solución con cumcount)
+    # 2. Diferenciar Filas Idénticas 
     
-    # Cuenta la ocurrencia de cada hash de contenido (1, 2, 3...)
     df['row_number'] = df.groupby(['ingestion_id']).cumcount() + 1
     
     
     # 3. Calcular el ID de Ingesta FINAL ÚNICO (Recalcular el Hash)
     
     # Combina el hash de contenido con el número de fila. 
-    # Esto garantiza que (hash_A, 1) y (hash_A, 2) generen hashes finales distintos.
     df['final_hash_input'] = (
         df['ingestion_id'].astype(str) + 
         '_' + 
         df['row_number'].astype(str)
     )
     
-    # Recalcula el hash para obtener el ID de ingesta final, corto y único
+    # Recalcula el hash
     df['ingestion_id'] = df['final_hash_input'].apply(generate_sha256)
-
-    
-    # 4. Limpieza
     
     # Eliminar columnas auxiliares
     df = df.drop(columns=['final_hash_input'])
     
     return df
 
-# --- Función Principal Modificada ---
+
 
 def get_files(path, file_name,multiple_files=False,columns_types=False):
     

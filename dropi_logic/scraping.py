@@ -64,10 +64,6 @@ def close_new_windows_and_return_to_main(driver, principal_window_handle: str):
     """
     Busca y cierra todas las ventanas (pestañas o pop-ups) que no sean 
     la ventana principal, y luego devuelve el foco del driver a la principal.
-    
-    Args:
-        driver (WebDriver): La instancia actual del driver de Selenium.
-        principal_window_handle (str): El identificador de la ventana original.
     """
     
     all_windows = driver.window_handles
