@@ -13,6 +13,7 @@ DF_ORDERS_DTYPE = {
     "FECHA DE REPORTE": str,
     "ID": str,
     "FECHA": str,
+    "NÚMERO GUIA": str,
     "TOTAL DE LA ORDEN": float,
     "GANANCIA": float,
     "PRECIO FLETE": float,
@@ -31,6 +32,7 @@ DF_ORDERS_PRODUCTS_DTYPE = {
     "FECHA DE REPORTE": str,
     "ID": str,
     "FECHA": str,
+    "NÚMERO GUIA": str,
     "TOTAL DE LA ORDEN": float,
     "GANANCIA": float,
     "PRECIO FLETE": float,
@@ -114,6 +116,29 @@ DICT_DATES = {
     3:["FECHA"],
     4: []
 }
+
+DICT_STATUS = {
+        "DEVOLUCION A REMITENTE": "EN DEVOLUCION",
+        "EN REPARTO": "EN TRANSITO",
+        "CANCELADO": "CANCELADO",
+        "ENTREGADO": "ENTREGADO",
+        "DEVOLUCION": "DEVUELTO",
+        "INGRESO CAMION": "EN TRANSITO",
+        "NOVEDAD SOLUCIONADA": "EN TRANSITO",
+        "NADIE EN CASA": "EN TRANSITO",
+        "NOVEDAD": "EN TRANSITO",
+        "EN ESPERA EN OFICINA": "EN TRANSITO",
+        "PICK UP HUB": "EN TRANSITO",
+        "GUIA_GENERADA": "GUIA GENERADA",
+        "PENDIENTE": "PENDIENTE",
+        "CARGA EN TRANSITO": "EN TRANSITO",
+        "ADMITIDA EN SUCURSAL": "EN TRANSITO",
+        "SIN ACCESO": "EN TRANSITO",
+        "REHUZA PRODUCTO": "EN DEVOLUCION",
+        "OFICINA CERRADA": "EN TRANSITO"
+    }
+
+
 
 #Consulta para obtener los datos de la última ingesta
 SQL_GET_LAST_RAW_DATA = "SELECT * FROM {} WHERE  ingestion_timestamp = (SELECT MAX(ingestion_timestamp) FROM {})"
