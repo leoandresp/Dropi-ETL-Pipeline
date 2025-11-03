@@ -81,4 +81,6 @@ def silver_data_extract():
     return [direct_query_data(SQL_GET_LAST_RAW_DATA.format(df,df) ) for df in RAW_TABLES]
     
 
-    
+def gold_silver_data_extract():
+    return file_query_data("db\querys\general_sales_report.sql")
+

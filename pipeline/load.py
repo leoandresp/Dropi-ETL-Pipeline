@@ -23,3 +23,6 @@ def load_silver_data(transformed_data:list):
         
         #Upsert Devoluciones
         file_query_data(r"db\querys\upserts\devolutions_upsert.sql",transformed_data[4])
+
+def load_gold_data(data:pd.DataFrame):
+    file_query_data(r"db\querys\upserts\general_sales_upsert.sql",data)

@@ -4,4 +4,5 @@ __pycache__/
 data/
 assets/
 .env
-db/*.duckdb
+db/*.duckd
+assets\anakarinadropi-572e7897ef4c.json

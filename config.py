@@ -5,6 +5,9 @@ from pathlib import Path
 #Cargamos las variables del archivo .env
 load_dotenv()
 
+#Ruta Base del Proyecto
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 #--------------------------------------
 #BASE DE DATOS
 #-------------------------------------
@@ -148,12 +151,18 @@ WARRANTY_SPLIT_COLUMN = "PRODUCTO"
 WARRANTY_LIST_SPLITTED = ["ID PRODUCTO","DESCRIPCION PRODUCTO"]
 WARRANTY_RANAMED_COLUMNS = {"ID GARANTIA":"ID"}
 
+#--------------------------------------
+#GOOGLE SHEETS CONFIG
+#-------------------------------------
+DROPI_SHEETS_ID = os.environ.get('DROPI_SHEETS_ID')
+SHEETS_KEY_PATH = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / "assets" / "anakarinadropi-572e7897ef4c.json"
 
 #--------------------------------------
 #Rutas universales del SO
 #-------------------------------------
 
 home_directory = Path.home()
+
 download_path_object = home_directory / "Downloads" 
 DOWNLOAD_FOLDER = str(download_path_object) #String de Ruta de Descargar
 
