@@ -95,6 +95,14 @@ WARRANTYS = "WARRANTYS"
 WALLET = "WALLET"
 DEVOLUTION = "DEVOLUTIONS"
 
+#QUERYS
+SQL_UPSERT_ORDERS_DATA = r"db\querys\upserts\orders_upsert.sql"
+SQL_UPSERT_ORDERS_PRODUCT_DATA = r"db\querys\upserts\orders_product_upsert.sql"
+SQL_UPSERT_WALLET_DATA = r"db\querys\upserts\wallet_upsert.sql"
+SQL_UPSERT_DEVOLUTION_DATA = r"db\querys\upserts\devolutions_upsert.sql"
+SQL_UPSERT_GENERAL_SALES_DATA = r"db\querys\upserts\general_sales_upsert.sql"
+
+
 #LOAD
 RAW_TABLES =[RAW_ORDERS,RAW_ORDERS_DETAILS,RAW_WARRANTYS,RAW_WALLET,RAW_DEVOLUTIONS]
 
