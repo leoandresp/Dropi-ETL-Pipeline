@@ -5,13 +5,14 @@ from pathlib import Path
 #Cargamos las variables del archivo .env
 load_dotenv()
 
-#Ruta Base del Proyecto
+#Rutas Base del Proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
+DB_DIR = Path(__file__).resolve().parent / "db"
 
 #--------------------------------------
 #BASE DE DATOS
 #-------------------------------------
-DATABASE_FILE = "db/Oferfly.duckdb"
+DATABASE_FILE = str(DB_DIR / "Oferfly.duckdb")
 DF_ORDERS_DTYPE = {
     "FECHA DE REPORTE": str,
     "ID": str,
@@ -96,11 +97,12 @@ WALLET = "WALLET"
 DEVOLUTION = "DEVOLUTIONS"
 
 #QUERYS
-SQL_UPSERT_ORDERS_DATA = r"db\querys\upserts\orders_upsert.sql"
-SQL_UPSERT_ORDERS_PRODUCT_DATA = r"db\querys\upserts\orders_product_upsert.sql"
-SQL_UPSERT_WALLET_DATA = r"db\querys\upserts\wallet_upsert.sql"
-SQL_UPSERT_DEVOLUTION_DATA = r"db\querys\upserts\devolutions_upsert.sql"
-SQL_UPSERT_GENERAL_SALES_DATA = r"db\querys\upserts\general_sales_upsert.sql"
+SQL_GET_GENERAL_SALES_DATA =  DB_DIR / "querys" / "general_sales_report.sql"
+SQL_UPSERT_ORDERS_DATA =   DB_DIR / "querys" /  "orders_upsert.sql"
+SQL_UPSERT_ORDERS_PRODUCT_DATA = DB_DIR / "querys" / "orders_product_upsert.sql"
+SQL_UPSERT_WALLET_DATA = DB_DIR / "querys" / "wallet_upsert.sql"
+SQL_UPSERT_DEVOLUTION_DATA = DB_DIR / "querys" / "devolutions_upsert.sql" 
+SQL_UPSERT_GENERAL_SALES_DATA = DB_DIR / "querys" / "general_sales_upsert.sql"
 
 
 #LOAD
