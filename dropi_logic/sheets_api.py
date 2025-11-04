@@ -65,7 +65,7 @@ def set_googleSheets(
 
     if affected_rows > 0:
         action = "borrados y cargados" if clear_sheet else "agregados al final"
-        print(f"✅ {affected_rows} filas {action} de forma exitosa")
+        print(f"{affected_rows} filas {action} de forma exitosa")
     else:
         raise Exception(f"No se pudo obtener información sobre la operación realizada. Respuesta: {result}")
         

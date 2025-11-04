@@ -35,7 +35,7 @@ def download_report_module(driver,action,wait_time,module,submodule=False):
   
 #HOT FIX: DESCARCODEAR LUEGO, HACERLA REUTILIZABLE. Actualmente se requiere entrega rapida al cliente    
 def extract_data():
-    
+    '''
     print(f"Inicia la extracción de Datos desde DROPI")
     
     #Configuramos la conexión con el navegador
@@ -57,7 +57,7 @@ def extract_data():
     logistic(driver,SB_DEVOLUTIONS)
     
     print(f"Guardando la data extraida en repectivos DF")
-    
+    '''
     #Guardamos los datos correspondientes en dataframes
     df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,columns_types=DF_ORDERS_DTYPE)
     df_order_by_product = get_files(DOWNLOAD_FOLDER,ORDER_BY_PRODUCT_FILE_NAME, columns_types=DF_ORDERS_PRODUCTS_DTYPE)
@@ -82,5 +82,5 @@ def silver_data_extract():
     
 
 def gold_silver_data_extract():
-    return file_query_data("db\querys\general_sales_report.sql")
+    return file_query_data(r"db\querys\general_sales_report.sql")
 

@@ -11,10 +11,10 @@ def handle_exceptions(func):
         try:
             return func(*args, **kwargs)
         except duckdb.Error as e:
-            print(f"❌ Error de DuckDB en '{func.__name__}': {e}")
+            print(f"Error de DuckDB en '{func.__name__}': {e}")
             return None
         except Exception as e:
-            print(f"❌ Error inesperado en '{func.__name__}': {e}")
+            print(f"Error inesperado en '{func.__name__}': {e}")
             return None
     return wrapper
 
@@ -33,7 +33,7 @@ def with_connection(db_file: str = DATABASE_FILE, autocommit: bool = True):
             try:
                 # 1. Establecer conexión
                 conn = duckdb.connect(database=db_file, read_only=False)
-                #print(f"⚙️ Conexión abierta a {db_name} para '{func.__name__}'") # Comentario opcional de debug
+                #print(f"Conexión abierta a {db_name} para '{func.__name__}'") # Comentario opcional de debug
                 
                 # 2. Ejecutar la función, inyectando 'conn'
                 result = func(conn, *args, **kwargs)
@@ -48,7 +48,7 @@ def with_connection(db_file: str = DATABASE_FILE, autocommit: bool = True):
                 # 4. Cerrar conexión
                 if conn:
                     conn.close()
-                    #print(f"⚙️ Conexión cerrada después de '{func.__name__}'") # Comentario opcional de debug
+                    #print(f"Conexión cerrada después de '{func.__name__}'") # Comentario opcional de debug
         return wrapper
     return decorator
 

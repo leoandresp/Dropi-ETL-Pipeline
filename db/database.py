@@ -14,7 +14,7 @@ def create_table_sql(conn: duckdb.DuckDBPyConnection, table_name: str, column_de
             {column_definition}
         );
     """)
-    print(f"✅ Tabla '{table_name}' creada o ya existente.")
+    print(f"Tabla '{table_name}' creada o ya existente.")
 
 @with_connection()
 def ingestion_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
@@ -40,7 +40,7 @@ def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
     """
     result = conn.execute(query).fetchdf()
-    #print(f"✅ Consulta ejecutada: {query}")
+    #print(f"Consulta ejecutada: {query}")
     return result
 
 @with_connection()
@@ -73,7 +73,7 @@ def create_table_from_df(table_name: str, df: pd.DataFrame, db_file: str):
         # DuckDB crea la tabla automáticamente usando el DataFrame
         conn.execute(f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df;")
         
-        print(f"✅ Tabla '{table_name}' creada y poblada desde DataFrame en {db_file}.")
+        print(f"Tabla '{table_name}' creada y poblada desde DataFrame en {db_file}.")
         
         # Devolvemos el número de filas para verificación
         return conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
