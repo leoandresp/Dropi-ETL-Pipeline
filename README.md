@@ -2,23 +2,18 @@ _Realizar CheckList para validar que todo el pipeline funcione correctamente
 _Validaciones.
 _Orquestacion.
 _Limpieza de Espacios en blanco.
-_Pendiente tipo de Dato de Nro. Guia.
 _Funcion para borrar archivos descargados
-_Validar que la actualizacion de las columnas timestamp sea correcta
-_Hacer el inner join de devoluciones tambien con el producto
-_Enviar datos a el archivo correspondiente
 _Monitoreo de Logging
 _Validar el comportamiento cuando no Existan datos nuevos
 _Principios ACID
 _Decoradores ed sheets_api
-_Reestructurar modulo de sheets_api(Nombres de funciones, definiciones, etc)
 _Validar que las rutas funcionen en linux
-_Validar cuando una columna esta completamente vacia no se pasa al Sheets vacia sino que elimina la columna
-_Colocar update_at en gerenal sales
+_Logs de insersión
 
-Limpieza de espacios en blanco
-Cambiar ID producto en el nomre nuevo de warrantys
-Cambiar el nombre ID garantia en la tabla de Warrantys
+
+Pendientes para luego:
+_Validar que la actualizacion de las columnas timestamp sea correcta
+_Colocar update_at en general sales
 
 1. El Objetivo Principal: Consolidar y Evaluar Órdenes 📊
 "Necesitamos un sistema que lea la información de varios reportes diarios y la junte en un solo archivo maestro, limpio y actualizado. El objetivo final es poder saber el estado real de cada orden, cuánto dinero ha entrado, y verificar si la liquidación (el pago final) fue correcta, especialmente las órdenes entregadas y devueltas."

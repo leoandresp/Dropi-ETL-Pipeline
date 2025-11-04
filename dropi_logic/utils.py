@@ -81,6 +81,18 @@ def handle_pandas_errors(func):
             return None
     return wrapper
 
+def try_except_sheets(func):
+    """Decorador que envuelve la función en un bloque try/except genérico para la api de Google Sheets"""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except FileNotFoundError as e:
+            print(f"[Error] No se encontró el archivo: {e}")
+        except Exception as e:
+            print(f"[Error] Ocurrió un problema en '{func.__name__}': {e}")
+    return wrapper
+
 #--------------------------------------------
 # FUNCIONES  OBTENCION Y MANIPULACIÓN DE ARCHIVOS
 #-------------------------------------------
@@ -170,6 +182,9 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         latest_file = current_files[0]
         df = read_excel_safely(latest_file,columns_types)
         final_df = add_ingestion_id(df)
+        
+        #Eliminamos el archivo descargado
+        #os.remove(latest_file)
         return  final_df
 
     # 3. Calcular el umbral de tiempo (hace 10 minutos)
@@ -196,8 +211,11 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
     dataframes = []
     for file in recent_files:
         df = read_excel_safely(file,columns_types) 
+        
         if df is not None:
             dataframes.append(df)
+            #Eliminamos el archivo utilizado
+            #os.remove(file)
         else:
             print(f"INFO: El archivo '{os.path.basename(file)}' fue omitido debido a un error de lectura.")
 

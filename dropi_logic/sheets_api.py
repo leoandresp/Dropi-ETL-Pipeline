@@ -5,66 +5,83 @@ from datetime import time
 import os
 import sys
 import pandas as pd
+from dropi_logic.utils import *
 
-def set_googleSheets(df: pd.DataFrame,sheets_id:str,path_key:str,range):
+#
+@try_except_sheets
+def set_googleSheets(
+    df: pd.DataFrame,
+    sheets_id: str,
+    path_key: str,
+    range: str,
+    clear_sheet: bool = True
+):
+    """
+    Sube un DataFrame a Google Sheets.
+    - Si clear_sheet=True: borra los datos antes de insertar.
+    - Si clear_sheet=False: agrega los datos al final automáticamente.
+    """
+
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    ruta_exe = os.path.abspath(sys.argv[0])
-    directorio_actual = os.path.dirname(ruta_exe)
-    ruta_key = os.path.join(directorio_actual, path_key)
+    path_exe = os.path.abspath(sys.argv[0])
+    current_directory = os.path.dirname(path_exe)
+    path_key = os.path.join(current_directory, path_key)
     SPREADSHEET_ID = sheets_id
-    
-    try:
-        creds = service_account.Credentials.from_service_account_file(ruta_key, scopes=SCOPES)
-        service = build('sheets', 'v4', credentials=creds)
-        sheet = service.spreadsheets()
-        
-        # Borra todos los datos de la hoja excepto la primera fila (encabezado)
-        clear_range = range
+
+    creds = service_account.Credentials.from_service_account_file(path_key, scopes=SCOPES)
+    service = build('sheets', 'v4', credentials=creds)
+    sheet = service.spreadsheets()
+
+    df_procesado = df.map(procesar_valor)
+    values = df_procesado.values.tolist()
+
+    if clear_sheet:
+        #Limpia el rango
         sheet.values().clear(
-            spreadsheetId=SPREADSHEET_ID, 
-            range=clear_range, 
+            spreadsheetId=SPREADSHEET_ID,
+            range=range,
             body={}
         ).execute()
         
-        # Función para procesar cada elemento
-        def procesar_valor(x):
-            # 1. Si el valor es nulo (NaN o NaT), retorna cadena vacía
-            if pd.isna(x):
-                return ""
-            
-            # 2. Si es Timestamp (Fecha y Hora), lo formatea
-            if isinstance(x, pd.Timestamp):
-                return x.strftime('%Y-%m-%d %H:%M:%S')
-            
-            # 3. AÑADIDO: Si es un objeto de tiempo puro (datetime.time), lo formatea
-            if isinstance(x, time):
-                return str(x) # Convierte el objeto time (ej: 08:30:00) a string
-                # Alternativamente: return x.strftime('%H:%M:%S')
-                
-            # 4. Retorna el valor convertido a string para asegurar compatibilidad
-            return str(x)
-        
-        # Aplica la función a todo el DataFrame
-        df_procesado = df.applymap(procesar_valor)
-        
-        # Convierte el DataFrame a lista de listas
-        values = df_procesado.values.tolist()
-        
-        # Actualiza el rango empezando en A2
+        #Inserta desde A2
         result = sheet.values().update(
             spreadsheetId=SPREADSHEET_ID,
-            range='A2',
+            range=range,
             valueInputOption='USER_ENTERED',
             body={'values': values}
         ).execute()
+        affected_rows = result.get('updatedRows', 0)
         
-        if 'updatedCells' in result:
-            print("Datos enviados de forma exitosa", "Información")
-        else:
-            raise Exception("No se pudo obtener información sobre las celdas actualizadas")
+    else:
+        #Agrega automáticamente al final
+        result = sheet.values().append(
+            spreadsheetId=SPREADSHEET_ID,
+            range=range,
+            valueInputOption='USER_ENTERED',
+            insertDataOption='INSERT_ROWS',
+            body={'values': values}
+        ).execute()
+        affected_rows = result.get('updates', {}).get('updatedRows', 0)
+
+    if affected_rows > 0:
+        action = "borrados y cargados" if clear_sheet else "agregados al final"
+        print(f"✅ {affected_rows} filas {action} de forma exitosa")
+    else:
+        raise Exception(f"No se pudo obtener información sobre la operación realizada. Respuesta: {result}")
+        
+        
+# Función Auxiliar para adaptar cada elemento al formato aceptado por google Sheets
+def procesar_valor(x):
+    # Si el valor es nulo (NaN o NaT), retorna cadena vacía
+    if pd.isna(x):
+        return ""
     
-    except FileNotFoundError as e:
-        print("Error al leer el archivo de clave:", str(e))
+    # Si es Timestamp (Fecha y Hora), lo formatea
+    if isinstance(x, pd.Timestamp):
+        return x.strftime('%Y-%m-%d %H:%M:%S')
     
-    except Exception as e:
-        print(f'Ocurrió un error al insertar los datos en Google Sheets: {str(e)}', "Error")
+    #Si es un objeto de tiempo puro (datetime.time), lo formatea
+    if isinstance(x, time):
+        return str(x) 
+        
+    return str(x)
