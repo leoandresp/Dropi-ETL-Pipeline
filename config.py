@@ -5,6 +5,9 @@ from pathlib import Path
 #Cargamos las variables del archivo .env
 load_dotenv()
 
+#Ruta Base del Proyecto
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 #--------------------------------------
 #BASE DE DATOS
 #-------------------------------------
@@ -13,6 +16,7 @@ DF_ORDERS_DTYPE = {
     "FECHA DE REPORTE": str,
     "ID": str,
     "FECHA": str,
+    "NÚMERO GUIA": str,
     "TOTAL DE LA ORDEN": float,
     "GANANCIA": float,
     "PRECIO FLETE": float,
@@ -31,6 +35,7 @@ DF_ORDERS_PRODUCTS_DTYPE = {
     "FECHA DE REPORTE": str,
     "ID": str,
     "FECHA": str,
+    "NÚMERO GUIA": str,
     "TOTAL DE LA ORDEN": float,
     "GANANCIA": float,
     "PRECIO FLETE": float,
@@ -79,19 +84,27 @@ DF_DEVOLUTIONS_DTYPE = {
 }
 
 #TablesName
-RAW_ORDERS= "RAW_Orders"
-RAW_ORDERS_DETAILS = "RAW_Orders_details"
-RAW_WARRANTYS = "RAW_Warrantys"
-RAW_WALLET = "RAW_Wallet"
-RAW_DEVOLUTIONS = "RAW_Devolutions"
+RAW_ORDERS= "RAW_ORDERS"
+RAW_ORDERS_PRODUCT = "RAW_ORDERS_PRODUCTS"
+RAW_WARRANTYS = "RAW_WARRANTYS"
+RAW_WALLET = "RAW_WALLET"
+RAW_DEVOLUTIONS = "RAW_DEVOLUTIONS"
 ORDERS = "ORDERS"
 ORDERS_PRODUCT = "ORDERS_PRODUCT"
 WARRANTYS = "WARRANTYS"
 WALLET = "WALLET"
-DEVOLUTION = "DEVOLUTION"
+DEVOLUTION = "DEVOLUTIONS"
+
+#QUERYS
+SQL_UPSERT_ORDERS_DATA = r"db\querys\upserts\orders_upsert.sql"
+SQL_UPSERT_ORDERS_PRODUCT_DATA = r"db\querys\upserts\orders_product_upsert.sql"
+SQL_UPSERT_WALLET_DATA = r"db\querys\upserts\wallet_upsert.sql"
+SQL_UPSERT_DEVOLUTION_DATA = r"db\querys\upserts\devolutions_upsert.sql"
+SQL_UPSERT_GENERAL_SALES_DATA = r"db\querys\upserts\general_sales_upsert.sql"
+
 
 #LOAD
-RAW_TABLES =[RAW_ORDERS,RAW_ORDERS_DETAILS,RAW_WARRANTYS,RAW_WALLET,RAW_DEVOLUTIONS]
+RAW_TABLES =[RAW_ORDERS,RAW_ORDERS_PRODUCT,RAW_WARRANTYS,RAW_WALLET,RAW_DEVOLUTIONS]
 
 
 #------------------------------------------------------------------
@@ -115,6 +128,29 @@ DICT_DATES = {
     4: []
 }
 
+DICT_STATUS = {
+        "DEVOLUCION A REMITENTE": "EN DEVOLUCION",
+        "EN REPARTO": "EN TRANSITO",
+        "CANCELADO": "CANCELADO",
+        "ENTREGADO": "ENTREGADO",
+        "DEVOLUCION": "DEVUELTO",
+        "INGRESO CAMION": "EN TRANSITO",
+        "NOVEDAD SOLUCIONADA": "EN TRANSITO",
+        "NADIE EN CASA": "EN TRANSITO",
+        "NOVEDAD": "EN TRANSITO",
+        "EN ESPERA EN OFICINA": "EN TRANSITO",
+        "PICK UP HUB": "EN TRANSITO",
+        "GUIA_GENERADA": "GUIA GENERADA",
+        "PENDIENTE": "PENDIENTE",
+        "CARGA EN TRANSITO": "EN TRANSITO",
+        "ADMITIDA EN SUCURSAL": "EN TRANSITO",
+        "SIN ACCESO": "EN TRANSITO",
+        "REHUZA PRODUCTO": "EN DEVOLUCION",
+        "OFICINA CERRADA": "EN TRANSITO"
+    }
+
+
+
 #Consulta para obtener los datos de la última ingesta
 SQL_GET_LAST_RAW_DATA = "SELECT * FROM {} WHERE  ingestion_timestamp = (SELECT MAX(ingestion_timestamp) FROM {})"
 
@@ -123,12 +159,18 @@ WARRANTY_SPLIT_COLUMN = "PRODUCTO"
 WARRANTY_LIST_SPLITTED = ["ID PRODUCTO","DESCRIPCION PRODUCTO"]
 WARRANTY_RANAMED_COLUMNS = {"ID GARANTIA":"ID"}
 
+#--------------------------------------
+#GOOGLE SHEETS CONFIG
+#-------------------------------------
+DROPI_SHEETS_ID = os.environ.get('DROPI_SHEETS_ID')
+SHEETS_KEY_PATH = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / "assets" / "anakarinadropi-572e7897ef4c.json"
 
 #--------------------------------------
 #Rutas universales del SO
 #-------------------------------------
 
 home_directory = Path.home()
+
 download_path_object = home_directory / "Downloads" 
 DOWNLOAD_FOLDER = str(download_path_object) #String de Ruta de Descargar
 

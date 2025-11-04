@@ -140,6 +140,12 @@ def add_unique_product_id(df: pd.DataFrame)-> pd.DataFrame:
     )
     return df
 
+def mapping_column(df: pd.DataFrame,column:str,dt_mapped:dict) -> pd.DataFrame:
+    '''
+    Mapea los valores de una columna por otros según un diccionario previamente establecido
+    '''
+    df[column] = df[column].apply(lambda x: dt_mapped.get(x,"SIN DEFINIR"))
+    return df
     
 #--------------------------------------------------------------
 #TRANSFORMACIÓN CAPA SILVER------------------------------------
@@ -162,6 +168,10 @@ def silver_data_transform(data):
     
     #Renombramos el ID GARANTIA por ID
     data[2] = renames_columns(data[2],WARRANTY_RANAMED_COLUMNS)
+    
+    #Mapeamos el Status según las reglas de negocio solicitadas
+    data[0] = mapping_column(data[0],"ESTATUS",DICT_STATUS) #MAPEAMOS ORDERS
+    data[1] = mapping_column(data[1],"ESTATUS",DICT_STATUS) #MAPEAMOS ORDERS_PRODUCTS
     
     #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
     data[1] = add_unique_product_id(data[1])
