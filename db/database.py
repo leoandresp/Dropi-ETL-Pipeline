@@ -23,7 +23,7 @@ def ingestion_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     """
     
     result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ingestion_id) DO NOTHING")
-    #print(f"Se han insertado {result.rowcount} en {table_name}")
+    print(f"Se han insertado {result.rowcount} en {table_name}")
 
 @with_connection()
 def upsert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):

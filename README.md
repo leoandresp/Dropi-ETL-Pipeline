@@ -4,9 +4,7 @@ _Orquestacion.
 _Limpieza de Espacios en blanco.
 _Funcion para borrar archivos descargados
 _Monitoreo de Logging
-_Validar el comportamiento cuando no Existan datos nuevos
 _Principios ACID
-_Decoradores ed sheets_api
 _Validar que las rutas funcionen en linux
 _Logs de insersión
 

@@ -7,7 +7,7 @@ def load_raw_data(datas:list,tables:list):
         
         #Saltamos al siguiente loop si no hay datos a cargar.
         if datas[i] is None:
-            print(f"No hay dara para cargar en {tables[i]}")
+            print(f"No hay data para cargar en {tables[i]}")
             continue
         
         ingestion_data_sql_df(tables[i],datas[i])
@@ -15,6 +15,7 @@ def load_raw_data(datas:list,tables:list):
 
 def load_silver_data(transformed_data:list):
         #Cargamos los datos nuevos a sus respectivas Tablas según corresponda:
+        
         
         #Upsert de la tabla de Ordenes
         file_query_data(SQL_UPSERT_ORDERS_DATA,transformed_data[0])
