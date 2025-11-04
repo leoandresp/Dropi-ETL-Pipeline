@@ -4,4 +4,5 @@ from config import *
 
 
 raw_data= extract_data()
+print(len(raw_data))
 load_raw_data(raw_data,RAW_TABLES)

@@ -3,6 +3,12 @@ from db.database import *
 
 def load_raw_data(datas:list,tables:list):    
     for i in range(len(datas)):
+        
+        #Saltamos al siguiente loop si no hay datos a cargar.
+        if datas[i] is None:
+            print(f"No hay dara para cargar en {tables[i]}")
+            continue
+        
         ingestion_data_sql_df(tables[i],datas[i])
     print("Lista la carga inicial")
 
