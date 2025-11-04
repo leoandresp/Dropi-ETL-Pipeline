@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -8,6 +9,22 @@ load_dotenv()
 #Rutas Base del Proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_DIR = Path(__file__).resolve().parent / "db"
+
+
+# --- Configuración de la ruta del ejecutable de Python para multiplataforma ---
+
+#Nombre de la carpeta del VENV
+VENV_NAME = 'dropi-extractor-venv'
+
+if sys.platform == 'win32':
+    PYTHON_EXECUTABLE = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / VENV_NAME / 'Scripts' / 'python.exe'
+elif sys.platform.startswith('linux') or sys.platform == 'darwin':
+    PYTHON_EXECUTABLE = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / VENV_NAME / 'bin' / 'python'
+else:
+    # Caso por defecto o no soportado, podría requerir ajuste
+    raise OSError(f"Plataforma no soportada: {sys.platform}")
+
+
 
 #--------------------------------------
 #BASE DE DATOS

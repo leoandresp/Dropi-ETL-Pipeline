@@ -82,5 +82,5 @@ def silver_data_extract():
     
 
 def gold_silver_data_extract():
-    return file_query_data(r"db\querys\general_sales_report.sql")
+    return file_query_data(SQL_GET_GENERAL_SALES_DATA)
 
