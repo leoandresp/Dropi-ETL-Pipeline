@@ -7,7 +7,7 @@ from pathlib import Path
 load_dotenv()
 
 #Rutas Base del Proyecto
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 DB_DIR = Path(__file__).resolve().parent / "db"
 
 
@@ -17,9 +17,9 @@ DB_DIR = Path(__file__).resolve().parent / "db"
 VENV_NAME = 'dropi-extractor-venv'
 
 if sys.platform == 'win32':
-    PYTHON_EXECUTABLE = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / VENV_NAME / 'Scripts' / 'python.exe'
+    PYTHON_EXECUTABLE = BASE_DIR / "NUEVA_Automatizacion_Dropi" / VENV_NAME / 'Scripts' / 'python.exe'
 elif sys.platform.startswith('linux') or sys.platform == 'darwin':
-    PYTHON_EXECUTABLE = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / VENV_NAME / 'bin' / 'python'
+    PYTHON_EXECUTABLE = BASE_DIR / VENV_NAME / 'bin' / 'python'
 else:
     # Caso por defecto o no soportado, podría requerir ajuste
     raise OSError(f"Plataforma no soportada: {sys.platform}")
@@ -182,7 +182,7 @@ WARRANTY_RANAMED_COLUMNS = {"ID GARANTIA":"ID"}
 #GOOGLE SHEETS CONFIG
 #-------------------------------------
 DROPI_SHEETS_ID = os.environ.get('DROPI_SHEETS_ID')
-SHEETS_KEY_PATH = BASE_DIR / "NUEVA_AUTOMATIZACION_DROPI" / "assets" / "anakarinadropi-572e7897ef4c.json"
+SHEETS_KEY_PATH = BASE_DIR / "assets" / "anakarinadropi-572e7897ef4c.json"
 
 #--------------------------------------
 #Rutas universales del SO
