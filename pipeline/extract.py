@@ -39,7 +39,7 @@ def extract_data():
     print(f"Inicia la extracción de Datos desde DROPI")
     
     #Configuramos la conexión con el navegador
-    driver = sc.WebDriverManager().get_driver(True)
+    driver = sc.WebDriverManager().get_driver()
     driver.get(DROPI_WEB)
     
     #Nos logueamos en la Página de Dropi

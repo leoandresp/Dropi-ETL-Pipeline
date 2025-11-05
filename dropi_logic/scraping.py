@@ -18,6 +18,9 @@ class WebDriverManager:
         try:
             # 1. Configuración de opciones.
             chrome_options = Options()
+            #Forzamos al idioma español
+            chrome_options.add_argument("--lang=es")
+            
             if headless:
                 #Opciones para ejecución en segundo plano sin interfaz.
                 chrome_options.add_argument("--headless=new") 

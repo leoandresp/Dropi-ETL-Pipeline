@@ -17,7 +17,7 @@ DB_DIR = Path(__file__).resolve().parent / "db"
 VENV_NAME = 'dropi-extractor-venv'
 
 if sys.platform == 'win32':
-    PYTHON_EXECUTABLE = BASE_DIR / "NUEVA_Automatizacion_Dropi" / VENV_NAME / 'Scripts' / 'python.exe'
+    PYTHON_EXECUTABLE = BASE_DIR  / VENV_NAME / 'Scripts' / 'python.exe'
 elif sys.platform.startswith('linux') or sys.platform == 'darwin':
     PYTHON_EXECUTABLE = BASE_DIR / VENV_NAME / 'bin' / 'python'
 else:
