@@ -8,7 +8,7 @@ load_dotenv()
 
 #Rutas Base del Proyecto
 BASE_DIR = Path(__file__).resolve().parent
-DB_DIR = Path(__file__).resolve().parent / "db"
+DB_DIR = BASE_DIR / "db"
 
 
 # --- Configuración de la ruta del ejecutable de Python para multiplataforma ---
@@ -114,12 +114,12 @@ WALLET = "WALLET"
 DEVOLUTION = "DEVOLUTIONS"
 
 #QUERYS
-SQL_GET_GENERAL_SALES_DATA =  DB_DIR / "querys" / "general_sales_report.sql"
-SQL_UPSERT_ORDERS_DATA =   DB_DIR / "querys" /  "orders_upsert.sql"
-SQL_UPSERT_ORDERS_PRODUCT_DATA = DB_DIR / "querys" / "orders_product_upsert.sql"
-SQL_UPSERT_WALLET_DATA = DB_DIR / "querys" / "wallet_upsert.sql"
-SQL_UPSERT_DEVOLUTION_DATA = DB_DIR / "querys" / "devolutions_upsert.sql" 
-SQL_UPSERT_GENERAL_SALES_DATA = DB_DIR / "querys" / "general_sales_upsert.sql"
+SQL_GET_GENERAL_SALES_DATA =  DB_DIR / "querys" /   "general_sales_report.sql"
+SQL_UPSERT_ORDERS_DATA =   DB_DIR / "querys" / "upserts" /"orders_upsert.sql"
+SQL_UPSERT_ORDERS_PRODUCT_DATA = DB_DIR / "querys" / "upserts" / "orders_product_upsert.sql"
+SQL_UPSERT_WALLET_DATA = DB_DIR / "querys" / "upserts" /"wallet_upsert.sql"
+SQL_UPSERT_DEVOLUTION_DATA = DB_DIR / "querys" / "upserts" / "devolutions_upsert.sql" 
+SQL_UPSERT_GENERAL_SALES_DATA = DB_DIR / "querys" / "upserts" /"general_sales_upsert.sql"
 
 
 #LOAD

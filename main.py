@@ -1,7 +1,7 @@
 import subprocess
 import logging
-import sys # Importamos 'sys' para la detección de la plataforma
-import os  # Importamos 'os' para la construcción de la ruta
+import sys 
+import os  
 from datetime import datetime
 from config import PYTHON_EXECUTABLE
 
