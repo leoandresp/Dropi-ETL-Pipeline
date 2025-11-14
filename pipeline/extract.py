@@ -35,7 +35,7 @@ def download_report_module(driver,action,wait_time,module,submodule=False):
   
 #HOT FIX: DESCARCODEAR LUEGO, HACERLA REUTILIZABLE. Actualmente se requiere entrega rapida al cliente    
 def extract_data():
-    '''
+    
     print(f"Inicia la extracción de Datos desde DROPI")
     
     #Configuramos la conexión con el navegador
@@ -55,7 +55,7 @@ def extract_data():
     #Descargamos las Devoluciones
     access_module(driver,M_LOGISTIC,60)
     logistic(driver,SB_DEVOLUTIONS)
-    '''
+    
     print(f"Guardando la data extraida en repectivos DF")
     
     #Guardamos los datos correspondientes en dataframes
