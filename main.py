@@ -4,12 +4,21 @@ import sys
 import os  
 from datetime import datetime
 from config import *
+from db.init_tables import init_database
 
 
 
 
 
 logging.info(f"Usando ejecutable de Python: {PYTHON_EXECUTABLE}")
+
+# Inicializar base de datos y tablas si es la primera ejecución
+logging.info("🔧 Verificando e inicializando base de datos...")
+try:
+    init_database()
+except Exception as e:
+    logging.error(f"❌ Error al inicializar base de datos: {e}")
+    exit(1)
 
 # --- Función Principal Modificada ---
 

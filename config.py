@@ -17,6 +17,8 @@ logging.basicConfig(
 #Rutas Base del Proyecto
 BASE_DIR = Path(__file__).resolve().parent
 DB_DIR = BASE_DIR / "db"
+DATA_DIR = BASE_DIR / "data"
+
 
 
 # --- Configuración de la ruta del ejecutable de Python para multiplataforma ---
@@ -133,6 +135,7 @@ SQL_UPSERT_GENERAL_SALES_DATA = DB_DIR / "querys" / "upserts" /"general_sales_up
 
 #LOAD
 RAW_TABLES =[RAW_ORDERS,RAW_ORDERS_PRODUCT,RAW_WARRANTYS,RAW_WALLET,RAW_DEVOLUTIONS]
+FINAL_DATA_OUTPUT = DATA_DIR / "general_sales.csv"
 
 
 #------------------------------------------------------------------

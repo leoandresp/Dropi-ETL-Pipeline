@@ -38,7 +38,7 @@ def upsert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     logging.info(f"Se han insertado {len(inserted)} filas en {table_name}")
 
 @with_connection()
-def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
+def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str)-> pd.DataFrame:
     """
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
     """
