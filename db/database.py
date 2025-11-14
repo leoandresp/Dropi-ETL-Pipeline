@@ -2,6 +2,7 @@ import duckdb
 import pandas as pd
 from db.utils_db import *
 from typing import Optional, Any, List, Tuple
+from config import *
 
 
 @with_connection() # Usará DATABASE_FILE por defecto (archivo persistente)
@@ -22,8 +23,9 @@ def ingestion_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     Inserta los dartos de una df en una tabla
     """
     
-    result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ingestion_id) DO NOTHING")
-    print(f"Se han insertado {result.rowcount} en {table_name}")
+    result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ingestion_id) DO NOTHING RETURNING   *")
+    inserted = result.fetchall()
+    logging.info(f"Se han insertado {len(inserted)} filas en {table_name}")
 
 @with_connection()
 def upsert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
@@ -31,8 +33,9 @@ def upsert_data_sql_df(conn: duckdb.DuckDBPyConnection, table_name: str, df):
     Inserta los dartos de una df en una tabla
     """
     
-    result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ID) DO UPDATE SET" )
-    #print(f"Se han insertado {result.rowcount} en {table_name}")
+    result = conn.execute(f"INSERT INTO {table_name} SELECT * FROM df ON CONFLICT (ID) DO UPDATE SET RETURNING   *" )
+    inserted = result.fetchall()
+    logging.info(f"Se han insertado {len(inserted)} filas en {table_name}")
 
 @with_connection()
 def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
@@ -40,7 +43,7 @@ def direct_query_data(conn: duckdb.DuckDBPyConnection, query: str):
     Ejecuta una consulta SELECT y devuelve los resultados como una lista de tuplas.
     """
     result = conn.execute(query).fetchdf()
-    #print(f"Consulta ejecutada: {query}")
+    logging.info(f"Consulta terminada. Filas obtenidas: {len(result)}")
     return result
 
 @with_connection()
@@ -52,7 +55,9 @@ def file_query_data(conn:duckdb.DuckDBPyConnection,query_path:str,df=False):
     
     #Guardamos el resultado de la consulta en un df
     result = conn.execute(sql_script)
-    return result.fetchdf()
+    result_df = result.fetchdf()
+    logging.info(f"Cantidad de registros {len(result_df)}")
+    return result_df
 
 # --- 3. Function to Create Table from DataFrame (Función con DataFrames) ---
 

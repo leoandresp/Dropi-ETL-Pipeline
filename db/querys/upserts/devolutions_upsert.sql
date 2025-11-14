@@ -25,4 +25,5 @@ DO UPDATE SET
     "STOCK ACTUAL" = EXCLUDED."STOCK ACTUAL",
     "NUMERO DE GUIA" = EXCLUDED."NUMERO DE GUIA",
     "fecha" = EXCLUDED."fecha",
-    "update_at" = NOW();
+    "update_at" = NOW()
+RETURNING *;

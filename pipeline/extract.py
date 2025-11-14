@@ -25,38 +25,41 @@ def download_report_module(driver,action,wait_time,module,submodule=False):
     close_new_windows_and_return_to_main(driver,principal_window)
         
     if action == A_EXCEL_DOWNLOAD:
-        return print(f"Descarga de {action} realizada")
+        logging.info(f"Descarga de {action} realizada")
+        return 
     
+    logging.info(f"Esperando descarga de {action}")
     time.sleep(180)
     driver.refresh()
     download_report(driver,1,10)
     time.sleep(10)
-    print(f"Descarga de {action} realizada")
+    logging.info(f"Descarga de {action} realizada")
   
 #HOT FIX: DESCARCODEAR LUEGO, HACERLA REUTILIZABLE. Actualmente se requiere entrega rapida al cliente    
-def extract_data():
+def extract_data(rpa_excecute=True):
     
-    print(f"Inicia la extracción de Datos desde DROPI")
+    if rpa_excecute:
+        logging.info(f"Inicia la extracción de Datos desde DROPI")
+        
+        #Configuramos la conexión con el navegador
+        driver = sc.WebDriverManager().get_driver()
+        driver.get(DROPI_WEB)
+        
+        #Nos logueamos en la Página de Dropi
+        log_in(driver,DROPI_USER,60,DROPI_PASS) 
+        time.sleep(20) #Esperamos a que desaparezcan los distintos modales
+        logging.info(f"Log in exitoso.")
+        
+        #Descargamos las ordenes por fila, producto, garantias e historial de Cartera
+        download_report_module(driver,A_ORDER_BY_ROW,60,M_ORDERS,SB_MY_ORDERS)
+        download_report_module(driver,A_ORDER_BY_PRODUCT,60,M_ORDERS,SB_MY_ORDERS)
+        download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_MY_WARRANTYS,SB_WARRANTYS)
+        download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_WALLET)
+        
+        #Descargamos las Devoluciones
+        access_module(driver,M_LOGISTIC,60)
+        logistic(driver,SB_DEVOLUTIONS)
     
-    #Configuramos la conexión con el navegador
-    driver = sc.WebDriverManager().get_driver()
-    driver.get(DROPI_WEB)
-    
-    #Nos logueamos en la Página de Dropi
-    log_in(driver,DROPI_USER,60,DROPI_PASS) 
-    time.sleep(20) #Esperamos a que desaparezcan los distintos modales
-    
-    #Descargamos las ordenes por fila, producto, garantias e historial de Cartera
-    download_report_module(driver,A_ORDER_BY_ROW,60,M_ORDERS,SB_MY_ORDERS)
-    download_report_module(driver,A_ORDER_BY_PRODUCT,60,M_ORDERS,SB_MY_ORDERS)
-    download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_MY_WARRANTYS,SB_WARRANTYS)
-    download_report_module(driver,A_EXCEL_DOWNLOAD,60,M_WALLET)
-    
-    #Descargamos las Devoluciones
-    access_module(driver,M_LOGISTIC,60)
-    logistic(driver,SB_DEVOLUTIONS)
-    
-    print(f"Guardando la data extraida en repectivos DF")
     
     #Guardamos los datos correspondientes en dataframes
     df_order_by_row = get_files(DOWNLOAD_FOLDER,ORDER_BY_ROW_FILE_NAME,columns_types=DF_ORDERS_DTYPE)
@@ -68,6 +71,7 @@ def extract_data():
     
     outputs_df = [df_order_by_row,df_order_by_product,df_warrantys,df_wallet,df_devolutions]
     
+    logging.info("Extración completada")
     return outputs_df
     
     

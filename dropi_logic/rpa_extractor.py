@@ -4,6 +4,7 @@ from config import *
 from selenium.webdriver import ActionChains
 import datetime
 import time
+from config import *
 
 #Funciones para el extractor de Datos Droppi
 
@@ -17,11 +18,13 @@ def log_in(driver,user,wait_time,password):
 #Ingresar a los módulos principales
 @try_exception_selenium
 def access_module(driver,module,wait_time):
+    logging.info(f"Accediendo al módulo {module}")
     click_action(driver,By.XPATH, rf"//a[.//span[contains(text(), '{module}')]]",wait_time)
 
 #Acceder a los Sub-Módulos
 @try_exception_selenium
 def access_sub_module(driver,submodule,wait_time):
+    logging.info(f"Accediendo al Sub-módulo {submodule}")
     click_action(driver, By.XPATH, rf"//a[contains(text(), '{submodule}')]", wait_time)
     
 #Presionar alguna acción dentro de los módulos.
@@ -31,12 +34,15 @@ def module_actions_button(driver,action,wait_time):
     
     #Validamos si existen el botón de "Acciones", sino presionamos la acción directamente
     if element_exists(driver,By.XPATH,xpath_acciones):
+        logging.info(f"Presionando {action}")
         click_action(driver, By.XPATH, rf"//a[contains(text(), 'Acciones')]", wait_time)
         click_action(driver, By.XPATH, rf"//button[contains(text(), '{action}')]", wait_time)
     else:
+        logging.info(f"Presionando {action}")
         click_action(driver, By.XPATH, rf"//button[contains(span, '{action}')]", wait_time)
     
     if action in ACTION_WITH_REPORT_LIST: 
+        logging.info(f"Cambiando al módulo de Reportes")
         click_action(driver, By.XPATH, "//button[contains(text(), 'Ver reportes')]", 10)
 
 @try_exception_selenium
@@ -67,6 +73,7 @@ def download_report(driver,index_row,wait_time):
 @try_exception_selenium 
 def logistic(driver, action):
     if action == 'Devoluciones':
+        logging.info(f"Accediendo al Sub-módulo Devoluciones")
         click_action(driver, By.XPATH, "//a[contains(text(), 'Devoluciones')]", 10)
         #current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -83,7 +90,8 @@ def logistic(driver, action):
             )
 
         rows = table.find_elements(By.TAG_NAME, "tr")[1:]  # omitir encabezado
-
+        count = 0 #Para mostrar cuantos archivos se descargaron
+        
         for row in rows:
             cols = row.find_elements(By.TAG_NAME, "td")
             row_date = cols[3].text.strip()
@@ -99,6 +107,9 @@ def logistic(driver, action):
                     download_btn.click()
                     time.sleep(5)  # espera por la descarga
                     close_new_windows_and_return_to_main(driver,principal_window)
+                    
+        logging.info(f"Fueron descargados {count} reportes de devoluciones")
+                    
 
 if __name__ == "__main__":
     pass

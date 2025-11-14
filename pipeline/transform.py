@@ -124,7 +124,7 @@ def parse_date_with_formats(date_str: str) -> pd.Timestamp:
         pass
     
     # Intentar inferencia (fallará para cadenas no válidas)
-    return pd.to_datetime(date_str, errors='raise') 
+    return pd.to_datetime(date_str,  dayfirst=True,errors='raise') 
 
 def renames_columns(df: pd.DataFrame,columns_renamed:dict) -> pd.DataFrame:
     ''' Renombra un grupo de columnas de un dataframe'''
@@ -151,18 +151,16 @@ def mapping_column(df: pd.DataFrame,column:str,dt_mapped:dict) -> pd.DataFrame:
 #TRANSFORMACIÓN CAPA SILVER------------------------------------
 #--------------------------------------------------------------
     
-def clean_raw_data(data):
-        print("Incio de limpieza de datos para capa Silver")        
+def clean_raw_data(data):        
         #Limpiamos la DATA
-        print("Limpienado datos")
         silver_data = clean_list_of_dataframes(data,DICT_DATES)
+        logging.info("Datos limpiados para capa Silver")
         return silver_data
 
 
 def silver_data_transform(data):
     
     #Realizamos las Transformaciones correspondientes
-    print("Realizando las tranformaciones correspondientes")
     #Dividimos la columna de producto
     data[2] = split_column(data[2],WARRANTY_SPLIT_COLUMN,"-",WARRANTY_LIST_SPLITTED) 
     
@@ -176,6 +174,7 @@ def silver_data_transform(data):
     #Añadimos un ID unico al df que tiene el detalle de ordenes y sus productos
     data[1] = add_unique_product_id(data[1])
     
+    logging.info("Reglas de Negocio aplicadas correctamente")
     return data
         
 

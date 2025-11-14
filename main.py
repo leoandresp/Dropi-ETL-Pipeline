@@ -3,13 +3,9 @@ import logging
 import sys 
 import os  
 from datetime import datetime
-from config import PYTHON_EXECUTABLE
+from config import *
 
-# Configurar logging (mantenido igual)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+
 
 
 
@@ -54,4 +50,4 @@ if __name__ == "__main__":
             logging.critical("Pipeline detenido por error en el paso anterior.")
             exit(1)
 
-    logging.info("🎉 Pipeline completado exitosamente")
+    logging.info("Pipeline completado exitosamente")

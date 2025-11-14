@@ -165,13 +165,14 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
     Si multiple_files es True, combina los archivos cuya fecha de modificación 
     esté dentro de los últimos 10 minutos.
     """
+    logging.info(f"Iniciando extracción de la raw data de {file_name}")
     
     # 1. Definir el patrón de búsqueda y encontrar todos los archivos
     pattern = os.path.join(path, f'*{file_name}*')
     current_files = glob.glob(pattern)
 
     if not current_files:
-        print(f"INFO: No se encontraron archivos disponibles para {file_name}")
+        logging.info(f"INFO: No se encontraron archivos disponibles para {file_name}")
         return None
 
     # 2. Ordenar todos los archivos por fecha de modificación (más reciente primero)
@@ -184,7 +185,8 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         final_df = add_ingestion_id(df)
         
         #Eliminamos el archivo descargado
-        #os.remove(latest_file)
+        os.remove(latest_file)
+        logging.info(f"{file_name} extraida correctamente")
         return  final_df
 
     # 3. Calcular el umbral de tiempo (hace 10 minutos)
@@ -205,7 +207,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
 
     # 5. Procesar los archivos recientes
     if not recent_files:
-        print(f"INFO: No hay archivos que cumplan el filtro de 10 minutos de {file_name}")
+        logging.info(f"INFO: No hay archivos que cumplan el filtro de 10 minutos de {file_name}")
         return None
         
     dataframes = []
@@ -215,20 +217,20 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         if df is not None:
             dataframes.append(df)
             #Eliminamos el archivo utilizado
-            #os.remove(file)
+            os.remove(file)
         else:
-            print(f"INFO: El archivo '{os.path.basename(file)}' fue omitido debido a un error de lectura.")
+            logging.error(f"ERROR: El archivo '{os.path.basename(file)}' fue omitido debido a un error de lectura.")
 
     if dataframes:
         # Combinar todos los DataFrames en una sola estructura
         combined_df = pd.concat(dataframes, axis=0, ignore_index=True)
         
-        #Añadimos el ingestion_id:
         final_df = add_ingestion_id(combined_df)
         
+        logging.info(f"{file_name} extraida correctamente")
         return final_df
     else:
-        print("ERROR: Los archivos encontrados en el rango de 10 minutos no pudieron ser leídos.")
+        logging.error("ERROR: Los archivos encontrados en el rango de 10 minutos no pudieron ser leídos.")
         return None
     
     

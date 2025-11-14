@@ -2,9 +2,17 @@ import os
 import sys
 from dotenv import load_dotenv
 from pathlib import Path
+import logging
 
 #Cargamos las variables del archivo .env
 load_dotenv()
+
+# Configurar logging (mantenido igual)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 
 #Rutas Base del Proyecto
 BASE_DIR = Path(__file__).resolve().parent
@@ -112,6 +120,7 @@ ORDERS_PRODUCT = "ORDERS_PRODUCT"
 WARRANTYS = "WARRANTYS"
 WALLET = "WALLET"
 DEVOLUTION = "DEVOLUTIONS"
+GENERAL_SALES = "GENERAL_SALES"
 
 #QUERYS
 SQL_GET_GENERAL_SALES_DATA =  DB_DIR / "querys" /   "general_sales_report.sql"
