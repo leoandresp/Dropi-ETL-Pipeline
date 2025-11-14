@@ -185,7 +185,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         final_df = add_ingestion_id(df)
         
         #Eliminamos el archivo descargado
-        os.remove(latest_file)
+        #os.remove(latest_file)
         logging.info(f"{file_name} extraida correctamente")
         return  final_df
 
@@ -217,7 +217,7 @@ def get_files(path, file_name,multiple_files=False,columns_types=False):
         if df is not None:
             dataframes.append(df)
             #Eliminamos el archivo utilizado
-            os.remove(file)
+            #os.remove(file)
         else:
             logging.error(f"ERROR: El archivo '{os.path.basename(file)}' fue omitido debido a un error de lectura.")
 
