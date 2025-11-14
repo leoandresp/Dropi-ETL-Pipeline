@@ -14,26 +14,31 @@ logging.info(f"Usando ejecutable de Python: {PYTHON_EXECUTABLE}")
 # --- Función Principal Modificada ---
 
 def run_step(module_name):
-    """Ejecuta un módulo y verifica su resultado"""
     logging.info(f"Iniciando {module_name}")
     try:
-        result = subprocess.run(
+        process = subprocess.Popen(
             [PYTHON_EXECUTABLE, '-m', module_name],
-            check=True,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True
         )
+
+        # Leer y loguear línea por línea en tiempo real
+        for line in iter(process.stdout.readline, ''):
+            if line:
+                logging.info(line.strip())
+
+        process.stdout.close()
+        return_code = process.wait()
+        if return_code != 0:
+            logging.error(f"Error en {module_name}, código de salida {return_code}")
+            return False
+
         logging.info(f"✅ {module_name} completado exitosamente")
-        logging.debug(result.stdout)
         return True
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error en {module_name}: {e}")
-        logging.error(f"Salida estándar:\n{e.stdout}")
-        logging.error(f"Error estándar:\n{e.stderr}")
-        return False
+
     except FileNotFoundError:
         logging.error(f"Error: El ejecutable de Python '{PYTHON_EXECUTABLE}' no fue encontrado.")
-        logging.error("Asegúrate de que el entorno virtual esté creado y activado correctamente.")
         return False
 
 
