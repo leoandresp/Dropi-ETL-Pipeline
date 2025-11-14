@@ -202,6 +202,20 @@ home_directory = Path.home()
 download_path_object = home_directory / "Downloads" 
 DOWNLOAD_FOLDER = str(download_path_object) #String de Ruta de Descargar
 
+#---------------------------------------
+#VALIDATION
+#--------------------------------------
+
+#Lista de Validación de Nulos
+LIST_RAW_ORDER_NULL_VALIDATION =["ID","ingestion_id","ingestion_timestamp","row_number"]
+LIST_RAW_WARRANRY_NULL_VALIDATION = ["ID GARANTIA","ID ORDEN","ingestion_id","ingestion_timestamp","row_number"]
+LIST_RAW_WALLET_NULL_VALIDATION =["ID","ingestion_id","ORDEN ID","NUMERO DE GUIA","ingestion_timestamp","row_number"]
+LIST_RAW_DEVOLUTION_NULL_VALIDATION =["ID","NUMERO DE GUIA","ingestion_id","ingestion_timestamp","row_number"]
+
+#Lista de Validación Numerica
+
+
+
 
 #---------------------------------------
 #SCRAPPING CONFIG

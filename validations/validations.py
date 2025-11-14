@@ -72,7 +72,7 @@ def positive_numeric_validation(df: pd.DataFrame, columns: List[str]) -> None:
     logger.info("✅ Validación de valores numéricos positivos exitosa.")
 
 
-def validar_formato_fechas(df: pd.DataFrame, columns: List[str], format: str = '%Y-%m-%d') -> None:
+def format_date_validation(df: pd.DataFrame, columns: List[str], format: str = '%Y-%m-%d') -> None:
     """
     Valida que las columnas especificadas contengan fechas válidas y en el formato correcto.
     Detiene el proceso si una fecha es inválida o no coincide con el formato.
@@ -83,17 +83,25 @@ def validar_formato_fechas(df: pd.DataFrame, columns: List[str], format: str = '
             continue
 
         # Intenta convertir la columna a datetime y los errores a NaT
-        fechas_convertidas = pd.to_datetime(df[col], format=format, errors='coerce')
+        converted_dates = pd.to_datetime(df[col], format=format, errors='coerce')
 
         # Verifica si hay valores NaT (indicando fechas no válidas)
-        if fechas_convertidas.isnull().any():
-            ejemplo_invalido = df.loc[fechas_convertidas.isnull(), col].iloc[0]
+        if converted_dates.isnull().any():
+            invalid_date = df.loc[converted_dates.isnull(), col].iloc[0]
             error_msg = (
                 f"Se encontraron fechas inválidas o con formato incorrecto en la columna '{col}'. "
-                f"Ejemplo de valor no válido: '{ejemplo_invalido}'. Se esperaba el formato '{format}'. "
+                f"Ejemplo de valor no válido: '{invalid_date}'. Se esperaba el formato '{format}'. "
                 "La carga de datos se detiene."
             )
             logger.error(f"❌ {error_msg}")
             raise ValueError(error_msg)
 
     logger.info("✅ Validación de formato de fechas exitosa.")
+    
+    #-------------------------------------------------------------------------------------------------------
+    # VALIDACIONES DE CARGA
+    #-------------------------------------------------------------------------------------------------------
+    
+    def raw_data_validation(raw_data: list):
+        
+        
